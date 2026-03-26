@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Your Results — Breathe</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,200;9..40,300;9..40,400&display=swap');
+:root{--bg:#0e0e0e;--bg2:#141414;--surface:#1c1c1c;--surface2:#242424;--border:#2c2c2c;--border2:#3a3a3a;--text:#f0ede8;--text2:#b0aca6;--muted:#585858;--accent:#e8e0d4;--font-display:'Caveat',cursive;--font-body:'Lora',serif;--font-ui:'DM Sans',sans-serif;--pill:999px;--radius:18px;--dur:0.6s;}
+[data-theme="light"]{--bg:#f4f1ec;--bg2:#ede9e3;--surface:#e6e1da;--surface2:#ddd8d0;--border:#ccc7bf;--border2:#b5b0a8;--text:#1c1a17;--text2:#56524d;--muted:#9a9590;--accent:#3a3530;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--bg);color:var(--text);font-family:var(--font-ui);transition:background var(--dur),color var(--dur);}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:0.028;}
+.theme-ctrl{position:fixed;top:22px;right:26px;z-index:600;display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;}
+.theme-lbl{font-family:var(--font-ui);font-size:10px;font-weight:300;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;transition:color var(--dur);}
+.tog{position:relative;width:42px;height:22px;background:var(--surface2);border-radius:var(--pill);border:1px solid var(--border2);transition:background var(--dur),border-color var(--dur);}
+.tog::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:var(--muted);border-radius:50%;transition:transform .35s cubic-bezier(.4,0,.2,1),background var(--dur);}
+[data-theme="light"] .tog::after{transform:translateX(20px);background:var(--text2);}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 24px;border-radius:var(--pill);font-family:var(--font-ui);font-size:13px;font-weight:300;letter-spacing:.04em;cursor:pointer;border:1px solid var(--border2);background:var(--surface);color:var(--text2);transition:background .2s,color .2s,transform .15s;text-decoration:none;white-space:nowrap;}
+.btn:hover{background:var(--surface2);color:var(--text);}
+.btn:active{transform:scale(.97);}
+@keyframes swipeUp{from{opacity:0;transform:translateY(55px)}to{opacity:1;transform:translateY(0)}}
+@keyframes swipeDown{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-55px)}}
+.pg-enter{animation:swipeUp .65s cubic-bezier(.4,0,.2,1) forwards;}
+.pg-exit{animation:swipeDown .65s cubic-bezier(.4,0,.2,1) forwards;}
+/* layout */
+.wrap{max-width:700px;margin:0 auto;padding:80px 24px 64px;}
+.r-title{font-family:var(--font-display);font-size:clamp(30px,5.5vw,54px);font-weight:400;color:var(--text);margin-bottom:8px;line-height:1.2;transition:color var(--dur);}
+.r-sub{font-family:var(--font-ui);font-size:12px;font-weight:300;color:var(--muted);margin-bottom:44px;letter-spacing:.04em;}
+/* result card */
+.rcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:30px 32px;margin-bottom:18px;opacity:0;transform:translateY(24px);animation:cardIn .6s cubic-bezier(.4,0,.2,1) forwards;transition:background var(--dur),border-color var(--dur);}
+@keyframes cardIn{to{opacity:1;transform:translateY(0)}}
+.rcard-head{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+.rcard-icon{font-size:26px;line-height:1;flex-shrink:0;}
+.rcard-label{font-family:var(--font-ui);font-size:10px;font-weight:300;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;transition:color var(--dur);}
+.rcard-status{font-family:var(--font-display);font-size:22px;font-weight:600;line-height:1;}
+.bar-wrap{height:3px;background:var(--border2);border-radius:var(--pill);margin-bottom:20px;overflow:hidden;}
+.bar{height:100%;border-radius:var(--pill);width:0%;transition:width 1.3s cubic-bezier(.4,0,.2,1);}
+.rcard-body{font-family:var(--font-body);font-size:15px;line-height:1.8;color:var(--text2);margin-bottom:18px;transition:color var(--dur);}
+.sugg-head{font-family:var(--font-ui);font-size:10px;font-weight:300;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-top:16px;border-top:1px solid var(--border);}
+.sugg{display:flex;align-items:flex-start;gap:10px;font-family:var(--font-ui);font-size:13px;font-weight:300;color:var(--text2);line-height:1.65;margin-bottom:7px;transition:color var(--dur);}
+.sugg::before{content:'·';color:var(--muted);flex-shrink:0;margin-top:1px;}
+.seek-note{margin-top:14px;background:var(--surface2);border:1px solid var(--border2);border-radius:12px;padding:13px 17px;font-family:var(--font-ui);font-size:12px;font-weight:300;color:var(--text2);line-height:1.7;transition:background var(--dur),color var(--dur);}
+.seek-note b{font-weight:400;color:var(--text);}
+/* actions */
+.actions{display:flex;flex-wrap:wrap;gap:11px;margin-top:36px;}
+/* closing */
+.closing{font-family:var(--font-display);font-size:22px;color:var(--text2);text-align:center;padding:32px 0 16px;line-height:1.6;transition:color var(--dur);}
+</style>
+</head>
+<body class="pg-enter">
+
+<div class="theme-ctrl" id="themeCtrl">
+  <span class="theme-lbl" id="themeLbl">Dark</span>
+  <div class="tog"></div>
+</div>
+
+<div class="wrap">
+  <p class="r-title" id="rTitle">Here&rsquo;s where you are today</p>
+  <p class="r-sub">Based on your responses &mdash; read gently, without judgment.</p>
+  <div id="cards"></div>
+  <div class="actions">
+    <button class="btn" id="diaryBtn">&#128211; Open Diary</button>
+    <button class="btn" id="dlBtn">&#8595; Download Results</button>
+    <button class="btn" id="retakeBtn">&#8617; Retake</button>
+  </div>
+  <p class="closing" id="closing"></p>
+</div>
+
+<script>
+(function(){
+  // theme
+  var root=document.documentElement, lbl=document.getElementById('themeLbl'), ctrl=document.getElementById('themeCtrl');
+  var th=localStorage.getItem('bth_theme')||'dark';
+  root.setAttribute('data-theme',th); lbl.textContent=th==='dark'?'Dark':'Light';
+  ctrl.addEventListener('click',function(){
+    var n=root.getAttribute('data-theme')==='light'?'dark':'light';
+    root.setAttribute('data-theme',n); localStorage.setItem('bth_theme',n); lbl.textContent=n==='dark'?'Dark':'Light';
+  });
+
+  function nav(url){ document.body.classList.add('pg-exit'); setTimeout(function(){window.location.href=url;},620); }
+  document.getElementById('diaryBtn').addEventListener('click',function(){nav('diary.html');});
+  document.getElementById('retakeBtn').addEventListener('click',function(){nav('questions.html');});
+
+  var name = localStorage.getItem('bth_name') || 'friend';
+  document.getElementById('rTitle').textContent = "Here\u2019s where you are today, " + name;
+
+  var resp = (function(){ try{return JSON.parse(localStorage.getItem('bth_resp'))||{};}catch(e){return {};} })();
+
+  var QUESTIONS = [
+    {id:'q1', topic:'mood',    inv:false},{id:'q2', topic:'mood',    inv:true },
+    {id:'q3', topic:'mood',    inv:false},{id:'q4', topic:'anxiety', inv:false},
+    {id:'q5', topic:'anxiety', inv:true },{id:'q6', topic:'anxiety', inv:false},
+    {id:'q7', topic:'sleep',   inv:false},{id:'q8', topic:'sleep',   inv:true },
+    {id:'q9', topic:'social',  inv:false},{id:'q10',topic:'social',  inv:true },
+    {id:'q11',topic:'self',    inv:false},{id:'q12',topic:'self',    inv:true },
+  ];
+  var TMETA = {
+    mood:   {label:'Emotional Wellbeing', icon:'\uD83C\uDF24'},
+    anxiety:{label:'Anxiety & Stress',    icon:'\uD83C\uDF0A'},
+    sleep:  {label:'Sleep & Energy',      icon:'\uD83C\uDF19'},
+    social: {label:'Connection',          icon:'\uD83E\uDD1D'},
+    self:   {label:'Self-Worth',          icon:'\uD83C\uDF31'},
+  };
+
+  // compute scores
+  var totals={}, counts={};
+  QUESTIONS.forEach(function(q){
+    var v = (resp[q.id]!==undefined) ? parseInt(resp[q.id]) : 50;
+    if(q.inv) v = 100-v;
+    totals[q.topic] = (totals[q.topic]||0) + v;
+    counts[q.topic] = (counts[q.topic]||0) + 1;
+  });
+  var scores={};
+  for(var t in totals) scores[t]=Math.round(totals[t]/counts[t]);
+
+  function band(s){ return s>=65?'high':s>=35?'mid':'low'; }
+
+  var CONTENT = {
+    mood:{
+      high:{label:'Feeling Steady',color:'#4a8c62',
+        body:"There's a warmth in your emotional world right now. You seem to be finding moments of hope and small joys — that's genuinely meaningful, even when life isn't perfect. This kind of steadiness is worth protecting.",
+        sugg:["Keep a brief note of what brought you joy today — even one line.","Share that warmth with someone around you.","Protect the habits and spaces that are supporting this."],
+        seek:null},
+      mid:{label:'Somewhere in Between',color:'#9a8a50',
+        body:"Your emotional world feels a bit mixed right now — some okay days, some harder ones. That's a very human place to be. You're not stuck; you're navigating.",
+        sugg:["Notice what shifts your mood, even slightly — up or down.","Gentle movement or time outdoors can help when things feel flat.","Reach out to someone you trust, even just to say hello."],
+        seek:"If the low days are becoming more frequent or intense, speaking with a counsellor or GP can be a helpful next step."},
+      low:{label:'Carrying Something Heavy',color:'#9a5a5a',
+        body:"It sounds like things have been weighing on you emotionally. Feeling low or empty — especially without a clear reason — can be exhausting and isolating. What you're experiencing is real, and you don't have to carry it alone.",
+        sugg:["Be very gentle with yourself today — small acts of care count.","Try to do one thing that used to bring you comfort, without pressure.","Consider writing down what you're feeling in the diary."],
+        seek:"If these feelings persist or feel overwhelming, please consider reaching out to a mental health professional or a crisis line. You deserve support."},
+    },
+    anxiety:{
+      high:{label:'Feeling Calm',color:'#4a8c62',
+        body:"You're describing a genuine sense of calm — your nervous system seems to have some room to breathe. This is a real strength, especially in a world that rarely slows down.",
+        sugg:["Identify what's contributing to this calm and protect it.","If you use breathing or grounding practices, keep them up.","Share what works for you — it might help someone close to you."],
+        seek:null},
+      mid:{label:'Some Tension Present',color:'#9a8a50',
+        body:"There's some underlying tension or worry in your days, even if it's not overwhelming. A background hum of anxiety can be draining over time, even when you're coping.",
+        sugg:["Try a 5-minute breathing exercise — slow exhale, longer than inhale.","Limit news and screen time before bed.","Name one worry aloud or on paper — it loses some power that way."],
+        seek:"If anxiety is regularly affecting your sleep, focus, or daily life, a therapist trained in CBT or mindfulness approaches can offer real tools."},
+      low:{label:'High Distress',color:'#9a5a5a',
+        body:"Your responses suggest that anxiety or stress is significantly present right now. A racing mind, loss of control, difficulty relaxing — these are hard to live with, and they're a signal worth listening to.",
+        sugg:["Ground yourself: name 5 things you can see, 4 you can touch, 3 you hear.","Reduce unnecessary decisions or demands today if possible.","Gentle physical movement — even a short walk — can shift your nervous system."],
+        seek:"Please consider speaking to a healthcare professional. Anxiety at this level is treatable, and you don't need to manage it alone. Crisis lines are available 24/7 if you need immediate support."},
+    },
+    sleep:{
+      high:{label:'Resting Well',color:'#4a8c62',
+        body:"Your sleep seems to be working for you — you're waking with some sense of restoration. Good sleep is foundational to everything else, and it sounds like yours is supporting you.",
+        sugg:["Maintain whatever routine is helping your sleep.","Protect your wind-down time in the evening.","Note what you did differently on good sleep nights."],
+        seek:null},
+      mid:{label:'Inconsistent Rest',color:'#9a8a50',
+        body:"Your sleep feels uneven — some nights work, others don't. This inconsistency can quietly affect your mood, focus, and resilience even when you don't notice the connection.",
+        sugg:["Try to wake at the same time every day, even on weekends.","Keep your bedroom cool, dark, and screen-free for the last 30 minutes.","Avoid caffeine after 2pm and check your alcohol intake."],
+        seek:"If poor sleep has persisted for more than a few weeks, your GP can help rule out underlying causes and discuss options."},
+      low:{label:'Sleep Struggling',color:'#9a5a5a',
+        body:"Not sleeping well is genuinely hard. Beyond fatigue, disrupted sleep affects almost everything — emotions, thinking, physical health. What you're experiencing is significant and deserves proper attention.",
+        sugg:["Speak to your GP — sleep issues are medical and very treatable.","Try CBT-I (Cognitive Behavioural Therapy for Insomnia) guidance online as a first step.","Reduce screen light and stimulation for an hour before bed."],
+        seek:"Chronic poor sleep is a medical concern. A GP referral for CBT-I is the gold standard treatment — please don't dismiss this as just tiredness."},
+    },
+    social:{
+      high:{label:'Connected',color:'#4a8c62',
+        body:"You're describing a meaningful sense of connection with people around you. That bond — feeling truly seen and not alone — is one of the most protective things for mental health. Nurture it.",
+        sugg:["Tell someone you appreciate them this week.","Plan something to look forward to with someone you care about.","Be open to deepening a newer connection."],
+        seek:null},
+      mid:{label:'Somewhat Isolated',color:'#9a8a50',
+        body:"Connection feels a bit patchy right now — there are people around, but perhaps not the kind of depth or ease that feels truly sustaining. That gap is worth paying attention to.",
+        sugg:["Reach out to one person you haven't spoken to in a while.","Join a group or class around something you already enjoy.","Allow yourself to be a little more open than feels comfortable."],
+        seek:"If loneliness is becoming a persistent feeling, speaking to a therapist or counsellor can help you understand what's blocking connection and how to shift it."},
+      low:{label:'Feeling Alone',color:'#9a5a5a',
+        body:"Feeling lonely — especially in the presence of others — is one of the most painful human experiences. It can feel invisible to the outside world, which makes it even harder. You naming it here is the beginning of something.",
+        sugg:["You don't have to fix it all at once — one small connection matters.","Volunteer work or community involvement can build connection gently.","Consider whether there are barriers to closeness worth exploring."],
+        seek:"Persistent loneliness is strongly linked to mental health. A counsellor or therapist can help you work through what's in the way. You deserve real connection."},
+    },
+    self:{
+      high:{label:'Kind to Yourself',color:'#4a8c62',
+        body:"There's something genuinely healthy in what you're describing — a degree of self-compassion and patience with yourself. This isn't complacency; it's one of the most important foundations for resilience.",
+        sugg:["Continue noticing when you are treating yourself with care.","Extend the same patience to others where you can.","Your relationship with yourself shapes everything else."],
+        seek:null},
+      mid:{label:'Mixed Self-View',color:'#9a8a50',
+        body:"You seem to have a complicated relationship with yourself right now — sometimes fair, sometimes harder than you need to be. Most of us live somewhere in this tension, but it's worth paying attention to.",
+        sugg:["When you catch self-criticism, ask: would I say this to a friend?","Acknowledge what you've been carrying lately — it's probably more than you admit.","Journaling or the diary below can help process self-critical loops."],
+        seek:"If self-criticism is persistent or linked to low self-worth or shame, a therapist can offer tools to shift these patterns at their root."},
+      low:{label:'Hard on Yourself',color:'#9a5a5a',
+        body:"You seem to be carrying a heavy weight of self-criticism right now. Being harder on yourself than you deserve is quietly exhausting — and often the first thing to erode everything else. You are not your worst moments or your harshest inner voice.",
+        sugg:["Write down three things you did okay today — however small.","Speak to yourself the way you would speak to someone you love.","Rest is not failure. Gentleness is not weakness."],
+        seek:"Persistent self-criticism and low self-worth are very effectively treated in therapy. You deserve the same compassion you would offer to anyone else — please reach out for support."},
+    },
+  };
+
+  var order = ['mood','anxiety','sleep','social','self'];
+  var container = document.getElementById('cards');
+
+  order.forEach(function(topic, i){
+    var sc  = scores[topic] !== undefined ? scores[topic] : 50;
+    var b   = band(sc);
+    var m   = TMETA[topic];
+    var c   = CONTENT[topic][b];
+    var div = document.createElement('div');
+    div.className = 'rcard';
+    div.style.animationDelay = (i*110)+'ms';
+
+    var seekHTML = c.seek
+      ? '<div class="seek-note"><b>A note:</b> '+c.seek+'</div>'
+      : '';
+    var suggHTML = c.sugg.map(function(s){ return '<div class="sugg">'+s+'</div>'; }).join('');
+
+    div.innerHTML =
+      '<div class="rcard-head">'+
+        '<span class="rcard-icon">'+m.icon+'</span>'+
+        '<div>'+
+          '<div class="rcard-label">'+m.label+'</div>'+
+          '<div class="rcard-status" style="color:'+c.color+'">'+c.label+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="bar-wrap"><div class="bar" style="background:'+c.color+'" data-sc="'+sc+'"></div></div>'+
+      '<p class="rcard-body">'+c.body+'</p>'+
+      '<div class="sugg-head">Things that might help</div>'+
+      suggHTML +
+      seekHTML;
+
+    container.appendChild(div);
+  });
+
+  // animate bars
+  setTimeout(function(){
+    document.querySelectorAll('.bar').forEach(function(b){
+      b.style.width = b.getAttribute('data-sc')+'%';
+    });
+  }, 350);
+
+  // closing note
+  var vals = order.map(function(t){ return scores[t]!==undefined?scores[t]:50; });
+  var avg  = Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length);
+  var note = avg>=65
+    ? "You're doing better than you give yourself credit for, "+name+"."
+    : avg>=35
+    ? "It's okay to be in the middle, "+name+". You're still showing up."
+    : "Thank you for your honesty today, "+name+". Please be very gentle with yourself.";
+  document.getElementById('closing').textContent = note;
+
+  // download
+  document.getElementById('dlBtn').addEventListener('click', function(){
+    var lines = ['BREATHE — My Reflection Results','Date: '+new Date().toLocaleDateString(),'Name: '+name,'','---------------------------------',''];
+    order.forEach(function(topic){
+      var sc=scores[topic]!==undefined?scores[topic]:50;
+      var b=band(sc); var m=TMETA[topic]; var c=CONTENT[topic][b];
+      lines.push(m.label.toUpperCase());
+      lines.push('Status: '+c.label+'  |  Score: '+sc+'/100');
+      lines.push('');
+      lines.push(c.body);
+      lines.push('');
+      lines.push('Things that might help:');
+      c.sugg.forEach(function(s){ lines.push('  - '+s); });
+      if(c.seek){ lines.push(''); lines.push('Note: '+c.seek); }
+      lines.push(''); lines.push('---------------------------------'); lines.push('');
+    });
+    lines.push(note);
+    lines.push('');
+    lines.push('This is a self-reflection tool, not a medical diagnosis.');
+    lines.push('Your data never leaves your device.');
+    var blob = new Blob([lines.join('\n')],{type:'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'breathe-results-'+new Date().toISOString().slice(0,10)+'.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+})();
+</script>
+</body>
+</html>

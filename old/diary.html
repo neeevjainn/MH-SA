@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Your Space — Breathe</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,200;9..40,300;9..40,400&display=swap');
+:root{--bg:#0e0e0e;--bg2:#141414;--surface:#1c1c1c;--surface2:#242424;--border:#2c2c2c;--border2:#3a3a3a;--text:#f0ede8;--text2:#b0aca6;--muted:#585858;--accent:#e8e0d4;--font-display:'Caveat',cursive;--font-body:'Lora',serif;--font-ui:'DM Sans',sans-serif;--pill:999px;--radius:16px;--dur:0.6s;}
+[data-theme="light"]{--bg:#f4f1ec;--bg2:#ede9e3;--surface:#e6e1da;--surface2:#ddd8d0;--border:#ccc7bf;--border2:#b5b0a8;--text:#1c1a17;--text2:#56524d;--muted:#9a9590;--accent:#3a3530;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-ui);overflow:hidden;transition:background var(--dur),color var(--dur);}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:0.028;}
+.theme-ctrl{position:fixed;top:22px;right:26px;z-index:600;display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;}
+.theme-lbl{font-family:var(--font-ui);font-size:10px;font-weight:300;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;transition:color var(--dur);}
+.tog{position:relative;width:42px;height:22px;background:var(--surface2);border-radius:var(--pill);border:1px solid var(--border2);transition:background var(--dur),border-color var(--dur);}
+.tog::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:var(--muted);border-radius:50%;transition:transform .35s cubic-bezier(.4,0,.2,1),background var(--dur);}
+[data-theme="light"] .tog::after{transform:translateX(20px);background:var(--text2);}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 24px;border-radius:var(--pill);font-family:var(--font-ui);font-size:13px;font-weight:300;letter-spacing:.04em;cursor:pointer;border:1px solid var(--border2);background:var(--surface);color:var(--text2);transition:background .2s,color .2s,transform .15s;white-space:nowrap;}
+.btn:hover{background:var(--surface2);color:var(--text);}
+.btn:active{transform:scale(.97);}
+@keyframes swipeUp{from{opacity:0;transform:translateY(55px)}to{opacity:1;transform:translateY(0)}}
+@keyframes swipeDown{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-55px)}}
+.pg-enter{animation:swipeUp .65s cubic-bezier(.4,0,.2,1) forwards;}
+.pg-exit{animation:swipeDown .65s cubic-bezier(.4,0,.2,1) forwards;}
+/* layout */
+.shell{position:fixed;inset:0;display:flex;flex-direction:column;padding-top:68px;}
+.d-head{padding:0 36px 20px;flex-shrink:0;}
+.d-title{font-family:var(--font-display);font-size:clamp(28px,5vw,46px);font-weight:400;color:var(--text);margin-bottom:5px;transition:color var(--dur);}
+.d-sub{font-family:var(--font-ui);font-size:11px;font-weight:300;color:var(--muted);letter-spacing:.05em;}
+.d-area{flex:1;padding:0 36px;overflow:hidden;}
+textarea{width:100%;height:100%;background:transparent;border:none;outline:none;resize:none;font-family:var(--font-body);font-size:17px;line-height:1.9;color:var(--text);caret-color:var(--text2);transition:color var(--dur);scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+textarea::-webkit-scrollbar{width:4px;}
+textarea::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+textarea::placeholder{color:var(--muted);font-style:italic;}
+.divider{height:1px;background:var(--border);margin:0 36px;flex-shrink:0;transition:background var(--dur);}
+.d-foot{padding:14px 36px 26px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.d-notice{font-family:var(--font-ui);font-size:10px;font-weight:300;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.dot-ind{width:6px;height:6px;background:var(--muted);border-radius:50%;opacity:.55;flex-shrink:0;}
+.d-right{display:flex;align-items:center;gap:14px;}
+.wc{font-family:var(--font-ui);font-size:10px;font-weight:300;color:var(--muted);min-width:56px;text-align:right;}
+.btns{display:flex;gap:9px;}
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;z-index:500;opacity:0;pointer-events:none;transition:opacity .3s;}
+.modal-bg.on{opacity:1;pointer-events:all;}
+.modal{background:var(--surface2);border:1px solid var(--border2);border-radius:20px;padding:30px 32px;max-width:300px;text-align:center;transition:background var(--dur);}
+.modal p{font-family:var(--font-display);font-size:20px;color:var(--text);margin-bottom:7px;}
+.modal small{font-family:var(--font-ui);font-size:12px;color:var(--muted);display:block;margin-bottom:22px;}
+.modal-btns{display:flex;gap:11px;justify-content:center;}
+</style>
+</head>
+<body class="pg-enter">
+
+<div class="theme-ctrl" id="themeCtrl">
+  <span class="theme-lbl" id="themeLbl">Dark</span>
+  <div class="tog"></div>
+</div>
+
+<div class="shell">
+  <div class="d-head">
+    <p class="d-title" id="dTitle">Your space</p>
+    <p class="d-sub">Write whatever is on your mind. Nothing here is saved or stored.</p>
+  </div>
+  <div class="d-area">
+    <textarea id="ta" placeholder="Start writing... let it all out. No one will read this. It disappears when you close the page."></textarea>
+  </div>
+  <div class="divider"></div>
+  <div class="d-foot">
+    <div class="d-notice"><span class="dot-ind"></span>Not stored &nbsp;&middot;&nbsp; Not sent &nbsp;&middot;&nbsp; Disappears on close</div>
+    <div class="d-right">
+      <span class="wc" id="wc">0 words</span>
+      <div class="btns">
+        <button class="btn" id="clearBtn">Clear</button>
+        <button class="btn" id="backBtn">&#8592; Results</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <p>Clear everything?</p>
+    <small>This cannot be undone.</small>
+    <div class="modal-btns">
+      <button class="btn" id="keepBtn">Keep it</button>
+      <button class="btn" id="yesBtn">Yes, clear</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement, lbl=document.getElementById('themeLbl'), ctrl=document.getElementById('themeCtrl');
+  var th=localStorage.getItem('bth_theme')||'dark';
+  root.setAttribute('data-theme',th); lbl.textContent=th==='dark'?'Dark':'Light';
+  ctrl.addEventListener('click',function(){
+    var n=root.getAttribute('data-theme')==='light'?'dark':'light';
+    root.setAttribute('data-theme',n); localStorage.setItem('bth_theme',n); lbl.textContent=n==='dark'?'Dark':'Light';
+  });
+
+  function nav(u){ document.body.classList.add('pg-exit'); setTimeout(function(){window.location.href=u;},620); }
+
+  var name = localStorage.getItem('bth_name')||'friend';
+  document.getElementById('dTitle').textContent = 'Your space, '+name;
+
+  var ta  = document.getElementById('ta');
+  var wc  = document.getElementById('wc');
+  var modal = document.getElementById('modal');
+
+  ta.addEventListener('input', function(){
+    var w = ta.value.trim().split(/\s+/).filter(Boolean).length;
+    wc.textContent = w===0?'0 words':w+(w===1?' word':' words');
+  });
+
+  document.getElementById('backBtn').addEventListener('click', function(){ nav('results.html'); });
+  document.getElementById('clearBtn').addEventListener('click', function(){ modal.classList.add('on'); });
+  document.getElementById('keepBtn').addEventListener('click', function(){ modal.classList.remove('on'); });
+  document.getElementById('yesBtn').addEventListener('click', function(){
+    ta.value=''; wc.textContent='0 words'; modal.classList.remove('on'); ta.focus();
+  });
+
+  window.addEventListener('beforeunload', function(e){
+    if(ta.value.trim().length>0){ e.preventDefault(); e.returnValue=''; }
+  });
+
+  ta.focus();
+})();
+</script>
+</body>
+</html>
