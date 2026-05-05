@@ -1,248 +1,129 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Breathe</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=DM+Sans:wght@300;400&display=swap');
-
-/* ── Variables ── */
-:root {
-  --bg: #0e0e0e;
-  --text: #f0ede8;
-  --text2: #b0aca6;
-  --muted: #585858;
-  --surface: #1c1c1c;
-  --border: #2c2c2c;
-  --font-display: 'Caveat', cursive;
-  --font-ui: 'DM Sans', sans-serif;
-}
-
-[data-theme="light"] {
-  --bg: #f4f1ec;
-  --text: #1c1a17;
-  --text2: #56524d;
-  --muted: #9a9590;
-  --surface: #e6e1da;
-  --border: #ccc7bf;
-}
-
-/* ── Reset ── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; overflow: hidden; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-ui);
-  transition: background 0.4s, color 0.4s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ── Theme toggle ── */
-.theme-btn {
-  position: fixed;
-  top: 20px;
-  right: 24px;
-  font-family: var(--font-ui);
-  font-size: 11px;
-  font-weight: 300;
-  color: var(--muted);
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 6px 14px;
-  cursor: pointer;
-  letter-spacing: 0.06em;
-}
-.theme-btn:hover { color: var(--text2); }
-
-/* ── Frames (each screen) ── */
-/* All frames sit on top of each other, we show one at a time */
-.frame {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 1s ease;
-}
-.frame.visible {
-  opacity: 1;
-  pointer-events: all;
-}
-
-/* ── Frame 1 — big hello ── */
-.big-hi {
-  font-family: var(--font-display);
-  font-size: clamp(100px, 16vw, 180px);
-  font-weight: 400;
-  color: var(--text);
-  letter-spacing: -2px;
-  line-height: 1;
-}
-
-/* ── Frame 2 — tagline ── */
-.tagline {
-  text-align: center;
-  font-family: var(--font-display);
-  font-size: clamp(28px, 4vw, 48px);
-  line-height: 1.5;
-  color: var(--text);
-}
-.tagline span { color: var(--text2); }
-
-/* ── Frame 3 — name input ── */
-.name-label {
-  font-size: 13px;
-  font-weight: 300;
-  color: var(--muted);
-  letter-spacing: 0.08em;
-}
-
-.name-input {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 14px 28px;
-  font-family: var(--font-display);
-  font-size: 22px;
-  color: var(--text);
-  width: 280px;
-  text-align: center;
-  outline: none;
-}
-.name-input::placeholder { color: var(--muted); }
-.name-input:focus { border-color: var(--text2); }
-
-.go-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text2);
-  font-size: 18px;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-.go-btn:hover { background: var(--text); color: var(--bg); }
-
-/* ── Disclaimer at bottom ── */
-.disclaimer {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 10px;
-  color: var(--muted);
-  text-align: center;
-  max-width: 440px;
-  line-height: 1.7;
-  opacity: 0;
-  transition: opacity 1s ease;
-  white-space: nowrap;
-}
-.disclaimer.visible { opacity: 1; }
-
-/* ── Page exit animation ── */
-body.fade-out { animation: fadeOut 0.5s ease forwards; }
-@keyframes fadeOut { to { opacity: 0; } }
+  @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=DM+Sans:wght@300;400&display=swap');
+ 
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  body {
+    background: #0f0f0f;
+    color: #eee;
+    font-family: 'DM Sans', sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+ 
+  /* each screen */
+  .screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+  }
+  .screen.show { display: flex; }
+ 
+  .big-word {
+    font-family: 'Caveat', cursive;
+    font-size: 120px;
+    line-height: 1;
+  }
+ 
+  .tagline {
+    font-family: 'Caveat', cursive;
+    font-size: 36px;
+    color: #aaa;
+  }
+ 
+  .hint {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 4px;
+  }
+ 
+  input {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-family: 'Caveat', cursive;
+    font-size: 22px;
+    color: #eee;
+    text-align: center;
+    outline: none;
+    width: 240px;
+  }
+  input:focus { border-color: #666; }
+ 
+  button {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 10px 24px;
+    color: #aaa;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  button:hover { background: #222; color: #eee; }
+ 
+  .note {
+    position: fixed;
+    bottom: 20px;
+    font-size: 11px;
+    color: #444;
+    text-align: center;
+    max-width: 400px;
+    line-height: 1.6;
+  }
 </style>
 </head>
 <body>
-
-  <button class="theme-btn" id="themeBtn">Light / Dark</button>
-
-  <!-- Frame 1: Big "Hi" -->
-  <div class="frame visible" id="f1">
-    <span class="big-hi">Hi.</span>
+ 
+  <div class="screen show" id="s1">
+    <span class="big-word">Hi.</span>
   </div>
-
-  <!-- Frame 2: Tagline -->
-  <div class="frame" id="f2">
-    <p class="tagline">Take a breath.<br><span>We're here to help you.</span></p>
+ 
+  <div class="screen" id="s2">
+    <p class="tagline">Take a breath.<br>We're here to help.</p>
   </div>
-
-  <!-- Frame 3: Name input -->
-  <div class="frame" id="f3">
-    <span class="name-label">What do we call you?</span>
-    <input class="name-input" id="nameInput" type="text" placeholder="Your name" maxlength="30" autocomplete="off" />
-    <button class="go-btn" id="goBtn">→</button>
+ 
+  <div class="screen" id="s3">
+    <p class="hint">What do we call you?</p>
+    <input id="nameInput" type="text" placeholder="Your name" maxlength="30" />
+    <button id="goBtn">Let's go →</button>
   </div>
-
-  <p class="disclaimer" id="disclaimer">
-    This is a self-reflection tool, not a medical diagnosis. Your answers never leave your device.
-  </p>
-
+ 
+  <p class="note">This is a self-reflection tool, not a medical diagnosis. Your answers never leave your device.</p>
+ 
 <script>
-(function () {
-
-  // ── Theme toggle ──
-  var root = document.documentElement;
-  var themeBtn = document.getElementById('themeBtn');
-
-  // Load saved theme, default to dark
-  var savedTheme = localStorage.getItem('bth_theme') || 'dark';
-  root.setAttribute('data-theme', savedTheme);
-
-  themeBtn.addEventListener('click', function () {
-    var current = root.getAttribute('data-theme');
-    var next = current === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    localStorage.setItem('bth_theme', next);
-  });
-
-
-  // ── Frame transitions ──
-  var f1 = document.getElementById('f1');
-  var f2 = document.getElementById('f2');
-  var f3 = document.getElementById('f3');
-  var disclaimer = document.getElementById('disclaimer');
-
-  function showFrame(hide, show) {
-    hide.classList.remove('visible');
-    show.classList.add('visible');
-  }
-
-  // After 2.5s show frame 2, after 5s show frame 3 + disclaimer
-  setTimeout(function () { showFrame(f1, f2); }, 2500);
-  setTimeout(function () {
-    showFrame(f2, f3);
-    disclaimer.classList.add('visible');
-    setTimeout(function () { document.getElementById('nameInput').focus(); }, 600);
-  }, 5000);
-
-
-  // ── Name input and proceed ──
+  var s1 = document.getElementById('s1');
+  var s2 = document.getElementById('s2');
+  var s3 = document.getElementById('s3');
   var nameInput = document.getElementById('nameInput');
-  var goBtn = document.getElementById('goBtn');
-
-  // Pre-fill if they've been here before
-  var prevName = localStorage.getItem('bth_name');
-  if (prevName && prevName !== 'friend') nameInput.value = prevName;
-
-  function proceed() {
+ 
+  var prev = localStorage.getItem('bth_name');
+  if (prev && prev !== 'friend') nameInput.value = prev;
+ 
+  setTimeout(function() { s1.classList.remove('show'); s2.classList.add('show'); }, 2000);
+  setTimeout(function() { s2.classList.remove('show'); s3.classList.add('show'); nameInput.focus(); }, 4500);
+ 
+  function go() {
     var name = nameInput.value.trim() || 'friend';
     localStorage.setItem('bth_name', name);
-    // Fade out and navigate
-    document.body.classList.add('fade-out');
-    setTimeout(function () { window.location.href = 'questions.html'; }, 500);
+    window.location.href = 'questions.html';
   }
-
-  goBtn.addEventListener('click', proceed);
-  nameInput.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') proceed();
-  });
-
-})();
+ 
+  document.getElementById('goBtn').addEventListener('click', go);
+  nameInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') go(); });
 </script>
 </body>
 </html>

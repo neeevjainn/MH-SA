@@ -1,364 +1,237 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Your Space — Breathe</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Lora:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400&display=swap');
-
-/* ── Variables ── */
-:root {
-  --bg: #0e0e0e;
-  --text: #f0ede8;
-  --text2: #b0aca6;
-  --muted: #585858;
-  --surface: #1c1c1c;
-  --border: #2c2c2c;
-  --border2: #3a3a3a;
-  --font-display: 'Caveat', cursive;
-  --font-body: 'Lora', serif;
-  --font-ui: 'DM Sans', sans-serif;
-}
-[data-theme="light"] {
-  --bg: #f4f1ec;
-  --text: #1c1a17;
-  --text2: #56524d;
-  --muted: #9a9590;
-  --surface: #e6e1da;
-  --border: #ccc7bf;
-  --border2: #b5b0a8;
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; overflow: hidden; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-ui);
-  display: flex;
-  flex-direction: column;
-  transition: background 0.4s, color 0.4s;
-}
-
-/* ── Theme toggle ── */
-.theme-btn {
-  position: fixed;
-  top: 20px;
-  right: 24px;
-  font-family: var(--font-ui);
-  font-size: 11px;
-  font-weight: 300;
-  color: var(--muted);
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 6px 14px;
-  cursor: pointer;
-  z-index: 10;
-}
-.theme-btn:hover { color: var(--text2); }
-
-/* ── Main layout (fills the screen) ── */
-.shell {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 72px 36px 20px;
-  gap: 14px;
-  min-height: 0;
-}
-
-/* ── Header ── */
-.title {
-  font-family: var(--font-display);
-  font-size: clamp(30px, 5vw, 50px);
-  font-weight: 400;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-.subtitle {
-  font-size: 11px;
-  font-weight: 300;
-  color: var(--muted);
-  letter-spacing: 0.05em;
-}
-
-/* ── Writing prompt ── */
-.prompt {
-  padding: 14px 16px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: rgba(255,255,255,0.02);
-  font-family: var(--font-body);
-  font-size: 14px;
-  line-height: 1.7;
-  color: var(--text2);
-  font-style: italic;
-}
-
-/* ── Textarea fills remaining space ── */
-.area {
-  flex: 1;
-  min-height: 0; /* needed for flex children to scroll properly */
-}
-
-textarea {
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  border: none;
-  outline: none;
-  resize: none;
-  font-family: var(--font-body);
-  font-size: 18px;
-  line-height: 1.9;
-  color: var(--text);
-  caret-color: var(--text2);
-  /* custom scrollbar */
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
-}
-textarea::placeholder { color: var(--muted); font-style: italic; }
-
-/* ── Divider ── */
-.divider {
-  height: 1px;
-  background: var(--border);
-  flex-shrink: 0;
-}
-
-/* ── Footer ── */
-.footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding-bottom: 4px;
-  flex-shrink: 0;
-}
-.meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 10px;
-  font-weight: 300;
-  color: var(--muted);
-  letter-spacing: 0.06em;
-}
-.dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--muted);
-  opacity: 0.5;
-}
-.word-count {
-  font-size: 11px;
-  color: var(--muted);
-}
-.actions { display: flex; gap: 9px; }
-
-.btn {
-  padding: 10px 20px;
-  border-radius: 999px;
-  border: 1px solid var(--border2);
-  background: var(--surface);
-  color: var(--text2);
-  font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 300;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-.btn:hover { background: var(--border2); color: var(--text); }
-
-/* ── Clear confirmation modal ── */
-.modal-bg {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
-}
-.modal-bg.visible {
-  opacity: 1;
-  pointer-events: all;
-}
-.modal {
-  width: min(320px, 100%);
-  padding: 26px 28px;
-  border: 1px solid var(--border2);
-  border-radius: 22px;
-  background: var(--surface);
-  text-align: center;
-  display: grid;
-  gap: 10px;
-}
-.modal h2 {
-  font-family: var(--font-display);
-  font-size: 28px;
-  color: var(--text);
-}
-.modal p {
-  font-family: var(--font-body);
-  font-size: 15px;
-  color: var(--text2);
-  line-height: 1.6;
-}
-.modal-btns {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 4px;
-}
-
-/* ── Fade out on navigate ── */
-body.fade-out { animation: fadeOut 0.5s ease forwards; }
-@keyframes fadeOut { to { opacity: 0; } }
+  @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=DM+Sans:wght@300;400&display=swap');
+ 
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+ 
+  body {
+    background: #0f0f0f;
+    color: #eee;
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+ 
+  /* header */
+  .header {
+    padding: 48px 32px 16px;
+    flex-shrink: 0;
+  }
+  .header h1 {
+    font-family: 'Caveat', cursive;
+    font-size: 42px;
+    font-weight: 400;
+    margin-bottom: 4px;
+  }
+  .header p {
+    font-size: 12px;
+    color: #555;
+  }
+ 
+  /* writing prompt */
+  .prompt {
+    margin: 0 32px 12px;
+    padding: 12px 16px;
+    border: 1px solid #222;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+    font-style: italic;
+    flex-shrink: 0;
+  }
+ 
+  /* textarea fills the space */
+  .area {
+    flex: 1;
+    padding: 0 32px;
+    min-height: 0;
+  }
+ 
+  textarea {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+    font-family: 'Caveat', cursive;
+    font-size: 22px;
+    line-height: 1.8;
+    color: #ddd;
+    caret-color: #888;
+    scrollbar-width: thin;
+    scrollbar-color: #222 transparent;
+  }
+  textarea::placeholder { color: #333; }
+ 
+  /* divider */
+  hr {
+    border: none;
+    border-top: 1px solid #1e1e1e;
+    margin: 12px 32px 0;
+    flex-shrink: 0;
+  }
+ 
+  /* footer */
+  .footer {
+    padding: 12px 32px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+ 
+  .meta {
+    font-size: 11px;
+    color: #444;
+  }
+ 
+  .right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+ 
+  .wordcount {
+    font-size: 11px;
+    color: #555;
+  }
+ 
+  button {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 9px 18px;
+    color: #888;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  button:hover { background: #222; color: #eee; }
+ 
+  /* confirm modal */
+  .modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    display: none;
+  }
+  .modal-bg.show { display: flex; }
+ 
+  .modal {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 24px 28px;
+    width: min(300px, 100%);
+    text-align: center;
+    display: grid;
+    gap: 10px;
+  }
+  .modal h2 {
+    font-family: 'Caveat', cursive;
+    font-size: 30px;
+    font-weight: 400;
+  }
+  .modal p { font-size: 14px; color: #888; line-height: 1.6; }
+  .modal-btns { display: flex; gap: 10px; justify-content: center; margin-top: 4px; }
 </style>
 </head>
 <body>
-
-  <button class="theme-btn" id="themeBtn">Light / Dark</button>
-
-  <div class="shell">
-    <header>
-      <h1 class="title" id="pageTitle">Your space.</h1>
-      <p class="subtitle">Write freely. Nothing here is uploaded or saved anywhere.</p>
-    </header>
-
-    <!-- A random writing prompt to help get started -->
-    <div class="prompt" id="prompt"></div>
-
-    <div class="area">
-      <textarea id="ta" placeholder="Start where your mind keeps returning. You don't need to make it polished."></textarea>
-    </div>
-
-    <div class="divider"></div>
-
-    <footer class="footer">
-      <div class="meta">
-        <span class="dot"></span>
-        <span>Private · Local only · Clears on close</span>
-      </div>
-      <span class="word-count" id="wordCount">0 words</span>
-      <div class="actions">
-        <button class="btn" id="clearBtn">Clear</button>
-        <button class="btn" id="backBtn">← Results</button>
-      </div>
-    </footer>
+ 
+  <div class="header">
+    <h1 id="title">Your space.</h1>
+    <p>Write freely. Nothing here is saved or sent anywhere — it clears when you close the page.</p>
   </div>
-
-  <!-- Confirmation modal before clearing -->
+ 
+  <div class="prompt" id="prompt"></div>
+ 
+  <div class="area">
+    <textarea id="ta" placeholder="Start wherever your mind is right now..."></textarea>
+  </div>
+ 
+  <hr />
+ 
+  <div class="footer">
+    <span class="meta">Private · local only · clears on close</span>
+    <div class="right">
+      <span class="wordcount" id="wc">0 words</span>
+      <button id="clearBtn">Clear</button>
+      <button id="backBtn">← Results</button>
+    </div>
+  </div>
+ 
   <div class="modal-bg" id="modal">
-    <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal">
       <h2>Clear everything?</h2>
       <p>This will remove everything you've written here.</p>
       <div class="modal-btns">
-        <button class="btn" id="keepBtn">Keep it</button>
-        <button class="btn" id="yesBtn">Yes, clear</button>
+        <button id="keepBtn">Keep it</button>
+        <button id="yesBtn">Yes, clear</button>
       </div>
     </div>
   </div>
-
+ 
 <script>
-(function () {
-
-  // ── Theme ──
-  var root = document.documentElement;
-  var themeBtn = document.getElementById('themeBtn');
-  root.setAttribute('data-theme', localStorage.getItem('bth_theme') || 'dark');
-  themeBtn.addEventListener('click', function () {
-    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    localStorage.setItem('bth_theme', next);
-  });
-
-
-  // ── Personalise title ──
   var name = localStorage.getItem('bth_name') || 'friend';
-  document.getElementById('pageTitle').textContent = 'Your space, ' + name + '.';
-
-
-  // ── Random writing prompt ──
+  document.getElementById('title').textContent = 'Your space, ' + name + '.';
+ 
   var prompts = [
-    'What feels heaviest in your chest right now, and what do you wish someone understood about it?',
+    'What feels heaviest right now, and what do you wish someone understood about it?',
     'What would a gentler day look like for you today?',
-    'If your mind has been loud lately, what has it been saying most often?',
-    'What are you carrying alone that might feel lighter once it is written down?'
+    'If your mind has been loud lately, what has it been saying most?',
+    'What are you carrying alone that might feel lighter written down?',
   ];
   document.getElementById('prompt').textContent = prompts[Math.floor(Math.random() * prompts.length)];
-
-
-  // ── Word count ──
-  var ta        = document.getElementById('ta');
-  var wordCount = document.getElementById('wordCount');
-
-  function updateWordCount() {
-    var words = ta.value.trim().split(/\s+/).filter(Boolean).length;
-    wordCount.textContent = words === 1 ? '1 word' : words + ' words';
-  }
-
-  ta.addEventListener('input', updateWordCount);
-  updateWordCount();
-  setTimeout(function () { ta.focus(); }, 100);
-
-
-  // ── Navigation ──
-  var allowLeave = false;
-
-  function nav(url) {
-    allowLeave = true;
-    document.body.classList.add('fade-out');
-    setTimeout(function () { window.location.href = url; }, 500);
-  }
-
-  document.getElementById('backBtn').addEventListener('click', function () { nav('results.html'); });
-
-
-  // ── Clear modal ──
+ 
+  var ta  = document.getElementById('ta');
+  var wc  = document.getElementById('wc');
   var modal = document.getElementById('modal');
-
-  document.getElementById('clearBtn').addEventListener('click', function () {
-    modal.classList.add('visible');
+  var allowLeave = false;
+ 
+  ta.addEventListener('input', function() {
+    var words = ta.value.trim().split(/\s+/).filter(Boolean).length;
+    wc.textContent = words === 1 ? '1 word' : words + ' words';
   });
-  document.getElementById('keepBtn').addEventListener('click', function () {
-    modal.classList.remove('visible');
+ 
+  setTimeout(function(){ ta.focus(); }, 100);
+ 
+  document.getElementById('backBtn').addEventListener('click', function() {
+    allowLeave = true;
+    window.location.href = 'results.html';
+  });
+ 
+  document.getElementById('clearBtn').addEventListener('click', function() {
+    modal.classList.add('show');
+  });
+  document.getElementById('keepBtn').addEventListener('click', function() {
+    modal.classList.remove('show');
     ta.focus();
   });
-  document.getElementById('yesBtn').addEventListener('click', function () {
+  document.getElementById('yesBtn').addEventListener('click', function() {
     ta.value = '';
-    updateWordCount();
-    modal.classList.remove('visible');
+    wc.textContent = '0 words';
+    modal.classList.remove('show');
     ta.focus();
   });
-
-  // Click outside modal = close it
-  modal.addEventListener('click', function (e) {
-    if (e.target === modal) {
-      modal.classList.remove('visible');
-      ta.focus();
-    }
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) { modal.classList.remove('show'); ta.focus(); }
   });
-
-
-  // ── Warn before leaving if there's unsaved text ──
-  window.addEventListener('beforeunload', function (e) {
-    if (!allowLeave && ta.value.trim()) {
-      e.preventDefault();
-      e.returnValue = '';
-    }
+ 
+  window.addEventListener('beforeunload', function(e) {
+    if (!allowLeave && ta.value.trim()) { e.preventDefault(); e.returnValue = ''; }
   });
-
-})();
 </script>
 </body>
 </html>

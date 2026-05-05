@@ -1,496 +1,342 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Your Results — Breathe</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Lora:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400&display=swap');
-
-/* ── Variables ── */
-:root {
-  --bg: #0e0e0e;
-  --text: #f0ede8;
-  --text2: #b0aca6;
-  --muted: #585858;
-  --surface: #1c1c1c;
-  --border: #2c2c2c;
-  --border2: #3a3a3a;
-  --font-display: 'Caveat', cursive;
-  --font-body: 'Lora', serif;
-  --font-ui: 'DM Sans', sans-serif;
-}
-[data-theme="light"] {
-  --bg: #f4f1ec;
-  --text: #1c1a17;
-  --text2: #56524d;
-  --muted: #9a9590;
-  --surface: #e6e1da;
-  --border: #ccc7bf;
-  --border2: #b5b0a8;
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-ui);
-  min-height: 100vh;
-  transition: background 0.4s, color 0.4s;
-}
-
-/* ── Theme toggle ── */
-.theme-btn {
-  position: fixed;
-  top: 20px;
-  right: 24px;
-  font-family: var(--font-ui);
-  font-size: 11px;
-  font-weight: 300;
-  color: var(--muted);
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 6px 14px;
-  cursor: pointer;
-  z-index: 10;
-}
-.theme-btn:hover { color: var(--text2); }
-
-/* ── Page layout ── */
-.wrap {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 80px 24px 60px;
-}
-
-/* ── Hero section ── */
-.hero {
-  margin-bottom: 32px;
-}
-.label {
-  font-size: 10px;
-  font-weight: 300;
-  color: var(--muted);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-.page-title {
-  font-family: var(--font-display);
-  font-size: clamp(36px, 6vw, 62px);
-  line-height: 1;
-  margin-bottom: 12px;
-}
-.subtitle {
-  font-family: var(--font-body);
-  font-size: 17px;
-  line-height: 1.8;
-  color: var(--text2);
-  max-width: 640px;
-}
-
-/* ── Summary box ── */
-.summary-box {
-  padding: 22px 24px;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  background: var(--surface);
-  margin-bottom: 28px;
-  font-family: var(--font-body);
-  font-size: 17px;
-  line-height: 1.85;
-  color: var(--text2);
-}
-.summary-box strong { color: var(--text); font-weight: 500; }
-
-/* ── Cards: one per topic ── */
-.cards {
-  display: grid;
-  gap: 14px;
-  margin-bottom: 28px;
-}
-
-.card {
-  padding: 22px;
-  border: 1px solid var(--border);
-  border-radius: 22px;
-  background: var(--surface);
-  /* Cards animate in on load, each one slightly delayed */
-  opacity: 0;
-  transform: translateY(16px);
-  animation: riseIn 0.55s ease forwards;
-}
-@keyframes riseIn { to { opacity: 1; transform: none; } }
-
-.card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 14px;
-}
-.card-topic-label {
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 6px;
-}
-.card-state {
-  font-family: var(--font-display);
-  font-size: 28px;
-  line-height: 1;
-}
-.card-score {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-/* ── Score bar ── */
-.bar-track {
-  height: 4px;
-  background: var(--border2);
-  border-radius: 999px;
-  overflow: hidden;
-  margin-bottom: 14px;
-}
-.bar-fill {
-  height: 100%;
-  width: 0; /* set via JS after render for smooth animation */
-  border-radius: 999px;
-  transition: width 1s ease;
-}
-
-.card-body {
-  font-family: var(--font-body);
-  font-size: 15px;
-  line-height: 1.8;
-  color: var(--text2);
-  margin-bottom: 14px;
-}
-
-.tips-label {
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-.tips { display: grid; gap: 6px; }
-.tip {
-  font-size: 13px;
-  line-height: 1.7;
-  color: var(--text2);
-  padding-left: 14px;
-  position: relative;
-}
-.tip::before { content: '•'; position: absolute; left: 0; color: var(--muted); }
-
-.card-note {
-  margin-top: 14px;
-  padding: 12px 14px;
-  border: 1px solid var(--border2);
-  border-radius: 14px;
-  background: rgba(255,255,255,0.03);
-  font-size: 13px;
-  line-height: 1.7;
-  color: var(--text2);
-}
-
-/* ── Support box (shows if any area is very low) ── */
-.support-box {
-  padding: 18px 20px;
-  border: 1px solid rgba(197, 138, 135, 0.35);
-  border-radius: 20px;
-  background: rgba(197, 138, 135, 0.08);
-  font-family: var(--font-body);
-  font-size: 16px;
-  line-height: 1.8;
-  color: var(--text2);
-  margin-bottom: 24px;
-}
-.support-box strong { color: var(--text); }
-
-/* ── Closing line ── */
-.closing {
-  font-family: var(--font-display);
-  font-size: 26px;
-  color: var(--text2);
-  text-align: center;
-  padding: 24px 0 8px;
-}
-
-/* ── Action buttons ── */
-.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
-
-.btn {
-  padding: 11px 20px;
-  border-radius: 999px;
-  border: 1px solid var(--border2);
-  background: var(--surface);
-  color: var(--text2);
-  font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 300;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-  text-decoration: none;
-}
-.btn:hover { background: var(--border2); color: var(--text); }
-
-/* ── Fade out on navigate ── */
-body.fade-out { animation: fadeOut 0.5s ease forwards; }
-@keyframes fadeOut { to { opacity: 0; } }
-
-@media (max-width: 600px) {
-  .wrap { padding: 72px 16px 48px; }
-}
+  @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=DM+Sans:wght@300;400&display=swap');
+ 
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  body {
+    background: #0f0f0f;
+    color: #eee;
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+ 
+  .page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 60px 24px 60px;
+  }
+ 
+  h1 {
+    font-family: 'Caveat', cursive;
+    font-size: 48px;
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+ 
+  .subtitle {
+    font-size: 14px;
+    color: #888;
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+ 
+  /* summary sentence */
+  .summary {
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 18px 20px;
+    font-size: 15px;
+    color: #bbb;
+    line-height: 1.8;
+    margin-bottom: 28px;
+  }
+  .summary strong { color: #eee; font-weight: 400; }
+ 
+  /* topic cards */
+  .cards { display: grid; gap: 12px; margin-bottom: 28px; }
+ 
+  .card {
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+ 
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+ 
+  .card-topic {
+    font-size: 11px;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+ 
+  .card-state {
+    font-family: 'Caveat', cursive;
+    font-size: 26px;
+  }
+ 
+  .card-score {
+    font-size: 11px;
+    color: #555;
+  }
+ 
+  /* simple score bar */
+  .bar-bg {
+    height: 3px;
+    background: #222;
+    border-radius: 2px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .bar {
+    height: 100%;
+    width: 0;
+    border-radius: 2px;
+    transition: width 0.8s ease;
+  }
+ 
+  .card-body {
+    font-size: 14px;
+    color: #999;
+    line-height: 1.75;
+    margin-bottom: 12px;
+  }
+ 
+  .tips-label {
+    font-size: 10px;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+ 
+  .tip {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.7;
+    padding-left: 12px;
+    position: relative;
+    margin-bottom: 4px;
+  }
+  .tip::before { content: '–'; position: absolute; left: 0; color: #555; }
+ 
+  .card-note {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #777;
+    line-height: 1.6;
+  }
+ 
+  /* warning box */
+  .support {
+    border: 1px solid #5a3535;
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 14px;
+    color: #bbb;
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+  .support strong { color: #eee; font-weight: 400; }
+ 
+  /* closing quote */
+  .closing {
+    font-family: 'Caveat', cursive;
+    font-size: 24px;
+    color: #666;
+    text-align: center;
+    padding: 20px 0;
+  }
+ 
+  /* buttons row */
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+ 
+  button {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 10px 20px;
+    color: #aaa;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  button:hover { background: #222; color: #eee; }
 </style>
 </head>
 <body>
-
-  <button class="theme-btn" id="themeBtn">Light / Dark</button>
-
-  <main class="wrap">
-    <section class="hero">
-      <p class="label">Your reflection</p>
-      <h1 class="page-title" id="pageTitle">Here's where you are today.</h1>
-      <p class="subtitle">These results reflect what you shared. Read them with curiosity, not judgment.</p>
-    </section>
-
-    <!-- Text summary of strongest / hardest areas -->
-    <div class="summary-box" id="summaryBox"></div>
-
-    <!-- One card per topic, built by JS -->
-    <div class="cards" id="cards"></div>
-
-    <!-- Only shows if any score is very low -->
-    <div class="support-box" id="supportBox" style="display:none"></div>
-
-    <!-- Personalised closing line -->
-    <p class="closing" id="closing"></p>
-
-    <div class="actions">
-      <button class="btn" id="diaryBtn">Open Diary</button>
-      <button class="btn" id="downloadBtn">Download Results</button>
-      <button class="btn" id="retakeBtn">Retake</button>
-    </div>
-  </main>
-
+<div class="page">
+ 
+  <h1 id="title">Your check-in.</h1>
+  <p class="subtitle">These reflect what you shared today. Read them gently, not critically.</p>
+ 
+  <div class="summary" id="summary"></div>
+ 
+  <div class="cards" id="cards"></div>
+ 
+  <div class="support" id="support" style="display:none"></div>
+ 
+  <p class="closing" id="closing"></p>
+ 
+  <div class="actions">
+    <button id="diaryBtn">Open Diary</button>
+    <button id="downloadBtn">Download</button>
+    <button id="retakeBtn">Retake</button>
+  </div>
+ 
+</div>
 <script>
-(function () {
-
-  // ── Theme ──
-  var root = document.documentElement;
-  var themeBtn = document.getElementById('themeBtn');
-  root.setAttribute('data-theme', localStorage.getItem('bth_theme') || 'dark');
-  themeBtn.addEventListener('click', function () {
-    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    localStorage.setItem('bth_theme', next);
-  });
-
-
-  // ── Load saved data ──
-  var name = localStorage.getItem('bth_name') || 'friend';
-  var responses = {};
-  try { responses = JSON.parse(localStorage.getItem('bth_resp')) || {}; } catch (e) {}
-
-
-  // ── Question map (same as questions.html, needed to calculate scores) ──
   var QUESTIONS = [
-    { id: 'q1',  topic: 'mood',    inv: false }, { id: 'q2',  topic: 'mood',    inv: true  },
-    { id: 'q3',  topic: 'mood',    inv: false }, { id: 'q4',  topic: 'anxiety', inv: false },
-    { id: 'q5',  topic: 'anxiety', inv: true  }, { id: 'q6',  topic: 'anxiety', inv: false },
-    { id: 'q7',  topic: 'sleep',   inv: false }, { id: 'q8',  topic: 'sleep',   inv: true  },
-    { id: 'q9',  topic: 'social',  inv: false }, { id: 'q10', topic: 'social',  inv: true  },
-    { id: 'q11', topic: 'self',    inv: false }, { id: 'q12', topic: 'self',    inv: true  },
+    { id:'q1',  topic:'mood',    inv:false }, { id:'q2',  topic:'mood',    inv:true  },
+    { id:'q3',  topic:'mood',    inv:false }, { id:'q4',  topic:'anxiety', inv:false },
+    { id:'q5',  topic:'anxiety', inv:true  }, { id:'q6',  topic:'anxiety', inv:false },
+    { id:'q7',  topic:'sleep',   inv:false }, { id:'q8',  topic:'sleep',   inv:true  },
+    { id:'q9',  topic:'social',  inv:false }, { id:'q10', topic:'social',  inv:true  },
+    { id:'q11', topic:'self',    inv:false }, { id:'q12', topic:'self',    inv:true  },
   ];
-
-  var TOPIC_ORDER = ['mood', 'anxiety', 'sleep', 'social', 'self'];
-
-  var TOPIC_META = {
-    mood:    { label: 'Emotional Wellbeing', icon: '☼' },
-    anxiety: { label: 'Anxiety & Stress',    icon: '◌' },
-    sleep:   { label: 'Sleep & Energy',      icon: '☾' },
-    social:  { label: 'Connection',          icon: '∞' },
-    self:    { label: 'Self-Worth',          icon: '✦' },
+ 
+  var TOPICS = ['mood', 'anxiety', 'sleep', 'social', 'self'];
+ 
+  var META = {
+    mood:    'Emotional Wellbeing',
+    anxiety: 'Anxiety & Stress',
+    sleep:   'Sleep & Energy',
+    social:  'Connection',
+    self:    'Self-Worth',
   };
-
-  // ── Content for each topic and score band ──
-  // band: "high" (≥70), "mid" (35–69), "low" (<35)
+ 
   var CONTENT = {
     mood: {
-      high: { label: 'Feeling Steadier',  color: '#74a87f', body: 'There seems to be some hope and emotional lightness available to you right now. Moments of steadiness are present and worth protecting.', tips: ['Notice what has been helping your mood feel lighter.', 'Keep one small ritual that brings comfort or joy.', 'Let yourself enjoy the good moments without minimizing them.'], note: null },
-      mid:  { label: 'Mixed Emotions',    color: '#b39b63', body: 'Your emotional world looks mixed at the moment. Some parts may feel okay while others feel heavier, which is a very human place to be.', tips: ['Track what tends to shift your mood up or down.', 'Try gentle movement or a change of scenery today.', 'Reach out to someone safe, even briefly.'], note: 'If the low moments are becoming more frequent or intense, speaking with a therapist or GP could help.' },
-      low:  { label: 'Carrying Weight',   color: '#ba7670', body: 'Things may be feeling emotionally heavy right now. Low mood can quietly drain energy, and that deserves care rather than dismissal.', tips: ['Keep today small and gentle where possible.', 'Try one familiar comfort without pressure to feel better instantly.', 'Use the diary to name what feels hardest right now.'], note: 'If these feelings feel persistent, overwhelming, or unsafe, please reach out to a mental health professional.' }
+      high: { label:'Feeling steadier',  color:'#6a9e74', body:'There seems to be some hope and lightness available to you right now. Moments of steadiness are real and worth protecting.', tips:['Notice what has been lifting your mood lately.','Keep one small thing that brings you comfort.','Let yourself enjoy the good moments.'], note:null },
+      mid:  { label:'Mixed emotions',    color:'#a08d57', body:'Some parts may feel okay while others feel heavier — that\'s a very human place to be.', tips:['Track what shifts your mood up or down.','Try a change of scenery today.','Reach out to someone safe, even briefly.'], note:'If low moments are becoming more frequent, speaking with a therapist or GP could help.' },
+      low:  { label:'Carrying weight',   color:'#a06060', body:'Things may be feeling emotionally heavy. Low mood can drain energy quietly, and that deserves care.', tips:['Keep today small and gentle.','Try one familiar comfort without pressure.','Use the diary to name what feels hardest.'], note:'If these feelings feel persistent or unsafe, please reach out to a mental health professional.' },
     },
     anxiety: {
-      high: { label: 'More Settled',    color: '#74a87f', body: 'Your responses suggest some room to breathe. There may be a steadier baseline underneath your days.', tips: ['Notice what supports this calmer state.', 'Protect recovery time, not just productivity time.', 'Keep grounding habits nearby for harder days.'], note: null },
-      mid:  { label: 'Some Tension',    color: '#b39b63', body: 'There seems to be some ongoing stress or mental pressure in the background. Even manageable anxiety can be tiring when it stays switched on.', tips: ['Try a longer exhale than inhale for a few breaths.', 'Name one specific worry on paper instead of carrying it all at once.', 'Reduce one unnecessary demand today if you can.'], note: 'If anxiety is regularly affecting sleep, focus, or daily life, a therapist can offer practical tools.' },
-      low:  { label: 'High Distress',   color: '#ba7670', body: 'Your answers point to a nervous system that may be under significant strain. Racing thoughts and persistent worry are hard to carry alone.', tips: ['Ground yourself: five things you see, four you feel, three you hear.', 'Lower stimulation for a while if possible.', 'Ask someone you trust to stay connected with you today.'], note: 'Anxiety at this intensity is treatable. If you feel overwhelmed or unsafe, please seek professional or crisis support.' }
+      high: { label:'More settled',    color:'#6a9e74', body:'Your responses suggest some room to breathe. There may be a steadier baseline underneath your days.', tips:['Notice what supports this calmer state.','Protect your recovery time.','Keep grounding habits nearby for harder days.'], note:null },
+      mid:  { label:'Some tension',    color:'#a08d57', body:'There seems to be some ongoing stress in the background. Even manageable anxiety is tiring when it stays on.', tips:['Try a longer exhale than inhale for a few breaths.','Write one specific worry down instead of carrying it.','Reduce one unnecessary demand today.'], note:'If anxiety is affecting sleep or daily life regularly, a therapist can help.' },
+      low:  { label:'High distress',   color:'#a06060', body:'Your answers suggest your nervous system may be under significant strain. That\'s hard to carry alone.', tips:['Ground yourself: name 5 things you see, 4 you feel, 3 you hear.','Lower stimulation for a while.','Ask someone you trust to stay close today.'], note:'Anxiety at this level is treatable. If you feel overwhelmed or unsafe, please seek support.' },
     },
     sleep: {
-      high: { label: 'Resting Better', color: '#74a87f', body: 'Sleep seems to be offering some recovery lately. That kind of restoration supports everything else.', tips: ['Keep your wind-down routine consistent.', 'Notice what was different on better sleep nights.', 'Hold on to a stable wake-up time when you can.'], note: null },
-      mid:  { label: 'Uneven Rest',    color: '#b39b63', body: 'Your rest looks inconsistent. Patchy sleep can quietly shape mood, focus, and resilience throughout the day.', tips: ['Keep your wake-up time as consistent as possible.', 'Limit bright screens close to bedtime.', 'Check whether caffeine or stress may be playing a role.'], note: 'If sleep difficulties continue for weeks, discussing them with a GP could be useful.' },
-      low:  { label: 'Sleep Strain',   color: '#ba7670', body: 'Sleep appears to be a real pressure point right now. Poor rest can intensify emotional strain and make everything feel harder.', tips: ['Treat sleep struggles as important, not minor.', 'Try to reduce stimulation in the hour before bed.', 'Explore CBT-I style sleep support if insomnia is a pattern.'], note: 'If disrupted sleep is ongoing or severe, professional support is worth seeking.' }
+      high: { label:'Resting better', color:'#6a9e74', body:'Sleep seems to be offering some real recovery lately. That supports everything else, so it\'s worth protecting.', tips:['Keep your wind-down routine consistent.','Notice what\'s been helping on better nights.','Stick to a regular wake-up time.'], note:null },
+      mid:  { label:'Uneven rest',    color:'#a08d57', body:'Your rest looks inconsistent. Patchy sleep quietly shapes mood, focus, and resilience.', tips:['Keep your wake-up time consistent even on weekends.','Limit screens close to bedtime.','Check if caffeine or stress is playing a role.'], note:'If sleep issues continue for weeks, it\'s worth talking to a GP.' },
+      low:  { label:'Sleep strain',   color:'#a06060', body:'Sleep appears to be a real pressure point right now. Poor rest intensifies everything else.', tips:['Treat your sleep as seriously as you\'d treat any health issue.','Reduce stimulation in the hour before bed.','Look into CBT-I sleep support if insomnia is a pattern.'], note:'Ongoing disrupted sleep is very treatable with professional support.' },
     },
     social: {
-      high: { label: 'Feeling Connected',  color: '#74a87f', body: 'There seems to be meaningful connection in your life. Feeling seen and accompanied is deeply protective for mental health.', tips: ['Lean into the people who help you feel safe and known.', 'Tell someone you appreciate them.', 'Make room for one nourishing conversation this week.'], note: null },
-      mid:  { label: 'Partly Connected',   color: '#b39b63', body: 'Connection may be present, but not always in the way that fully nourishes you. That difference is worth noticing.', tips: ['Reach out to one person you trust.', 'Choose depth over volume in your interactions.', 'Let yourself be a little more honest than usual with someone safe.'], note: 'If loneliness is becoming a pattern, talking with a therapist can help.' },
-      low:  { label: 'Feeling Isolated',   color: '#ba7670', body: 'Your responses suggest loneliness or disconnection may be weighing on you. That pain can feel invisible from the outside, but it is still significant.', tips: ['Start with one small point of contact instead of trying to fix everything.', 'Consider a recurring group or shared activity.', 'Use the diary to write the truth of how alone this feels.'], note: 'Persistent loneliness can have a major impact on wellbeing. Support from a therapist may help.' }
+      high: { label:'Feeling connected',  color:'#6a9e74', body:'There seems to be meaningful connection in your life. Feeling seen is deeply protective for mental health.', tips:['Lean into people who make you feel safe.','Tell someone you appreciate them.','Make space for one good conversation this week.'], note:null },
+      mid:  { label:'Partly connected',   color:'#a08d57', body:'Connection may be present but not always in a way that fully nourishes you. That difference matters.', tips:['Reach out to one person you trust.','Choose depth over volume in your interactions.','Try being a little more honest with someone safe.'], note:'If loneliness is becoming a pattern, talking with a therapist can help.' },
+      low:  { label:'Feeling isolated',   color:'#a06060', body:'Your responses suggest loneliness may be weighing on you. That pain is real even when invisible to others.', tips:['Start with one small point of contact.','Consider a recurring class, group, or shared activity.','Use the diary to write how alone this actually feels.'], note:'Persistent loneliness has a big impact on wellbeing. Support can make a real difference.' },
     },
     self: {
-      high: { label: 'Self-Compassion Present', color: '#74a87f', body: 'There is some gentleness in the way you are relating to yourself. That is one of the foundations of resilience.', tips: ['Keep noticing moments when you are fair to yourself.', 'Speak to yourself the way you would speak to someone you love.', 'Let rest and kindness count as real forms of progress.'], note: null },
-      mid:  { label: 'Mixed Self-View',         color: '#b39b63', body: 'You may be moving between self-kindness and self-criticism right now. That tension is common, but it still deserves attention.', tips: ['Catch one harsh thought and rewrite it more fairly.', 'Notice how often exhaustion makes your inner voice sharper.', 'Use the diary to respond to yourself with more honesty and care.'], note: 'If self-criticism is persistent or deeply painful, therapy can be very effective here.' },
-      low:  { label: 'Harsh Inner Voice',       color: '#ba7670', body: 'Your answers suggest you may be carrying a heavy amount of self-criticism. That kind of inner pressure is exhausting.', tips: ['Keep the bar for today small and compassionate.', 'Write down three things you did well enough.', 'Challenge the idea that harshness is what keeps you going.'], note: 'Low self-worth and persistent self-criticism are very treatable with the right support.' }
-    }
+      high: { label:'Self-compassion present', color:'#6a9e74', body:'There\'s some gentleness in how you\'re relating to yourself. That\'s one of the foundations of resilience.', tips:['Keep noticing when you\'re being fair to yourself.','Speak to yourself like you\'d speak to someone you love.','Let rest count as real progress.'], note:null },
+      mid:  { label:'Mixed self-view',         color:'#a08d57', body:'You may be moving between self-kindness and self-criticism. That tension is common but worth paying attention to.', tips:['Catch one harsh thought and rewrite it more fairly.','Notice when tiredness makes your inner voice sharper.','Use the diary to be more honest and kind to yourself.'], note:'If self-criticism feels persistent or painful, therapy can be really effective here.' },
+      low:  { label:'Harsh inner voice',       color:'#a06060', body:'You may be carrying a lot of self-criticism right now. That kind of inner pressure is exhausting.', tips:['Keep today\'s bar small and compassionate.','Write down three things you did well enough.','Challenge the idea that being hard on yourself helps.'], note:'Low self-worth is very treatable — you don\'t have to stay stuck here.' },
+    },
   };
-
-
-  // ── Calculate scores ──
-  // For each topic, average all its question answers (flipping inverted ones)
+ 
+  var name = localStorage.getItem('bth_name') || 'friend';
+  var responses = {};
+  try { responses = JSON.parse(localStorage.getItem('bth_resp')) || {}; } catch(e) {}
+ 
+  // calculate scores
   function calcScores() {
     var totals = {}, counts = {};
-    QUESTIONS.forEach(function (q) {
+    QUESTIONS.forEach(function(q) {
       var raw = responses[q.id] !== undefined ? Number(responses[q.id]) : 50;
-      var adjusted = q.inv ? 100 - raw : raw; // flip if inverted
-      totals[q.topic] = (totals[q.topic] || 0) + adjusted;
+      var val = q.inv ? 100 - raw : raw;
+      totals[q.topic] = (totals[q.topic] || 0) + val;
       counts[q.topic] = (counts[q.topic] || 0) + 1;
     });
-    var scores = {};
-    TOPIC_ORDER.forEach(function (t) {
-      scores[t] = counts[t] ? Math.round(totals[t] / counts[t]) : 50;
-    });
-    return scores;
+    var out = {};
+    TOPICS.forEach(function(t) { out[t] = Math.round(totals[t] / counts[t]); });
+    return out;
   }
-
-  function getBand(score) {
-    return score >= 70 ? 'high' : score >= 35 ? 'mid' : 'low';
-  }
-
+ 
+  function band(s) { return s >= 70 ? 'high' : s >= 35 ? 'mid' : 'low'; }
+ 
   var scores  = calcScores();
-  var sorted  = TOPIC_ORDER.slice().sort(function (a, b) { return scores[b] - scores[a]; });
-  var strongest = sorted[0];
-  var hardest   = sorted[sorted.length - 1];
-  var average   = Math.round(TOPIC_ORDER.reduce(function (sum, t) { return sum + scores[t]; }, 0) / TOPIC_ORDER.length);
-  var anyLow    = TOPIC_ORDER.some(function (t) { return scores[t] < 25; });
-
-
-  // ── Populate hero ──
-  document.getElementById('pageTitle').textContent = 'Here's your check-in, ' + name + '.';
-
-  document.getElementById('summaryBox').innerHTML =
-    '<strong>' + TOPIC_META[strongest].label + '</strong> looks like your strongest support right now, ' +
-    'while <strong>' + TOPIC_META[hardest].label + '</strong> may need the most care today.';
-
-
-  // ── Build topic cards ──
+  var sorted  = TOPICS.slice().sort(function(a,b){ return scores[b]-scores[a]; });
+  var best    = sorted[0];
+  var hardest = sorted[sorted.length - 1];
+  var avg     = Math.round(TOPICS.reduce(function(s,t){ return s+scores[t]; }, 0) / TOPICS.length);
+  var anyLow  = TOPICS.some(function(t){ return scores[t] < 25; });
+ 
+  document.getElementById('title').textContent = 'Your check-in, ' + name + '.';
+ 
+  document.getElementById('summary').innerHTML =
+    '<strong>' + META[best] + '</strong> looks like your steadiest area right now. ' +
+    '<strong>' + META[hardest] + '</strong> may need the most care today.';
+ 
   var cardsEl = document.getElementById('cards');
-
-  TOPIC_ORDER.forEach(function (topic, i) {
-    var score   = scores[topic];
-    var band    = getBand(score);
-    var content = CONTENT[topic][band];
-    var meta    = TOPIC_META[topic];
-
-    var card = document.createElement('article');
+ 
+  TOPICS.forEach(function(topic) {
+    var s = scores[topic];
+    var c = CONTENT[topic][band(s)];
+ 
+    var tipsHTML = c.tips.map(function(t){ return '<div class="tip">'+t+'</div>'; }).join('');
+    var noteHTML = c.note ? '<div class="card-note">'+c.note+'</div>' : '';
+ 
+    var card = document.createElement('div');
     card.className = 'card';
-    card.style.animationDelay = (i * 80) + 'ms'; // stagger the rise-in
-
-    var tipsHTML = content.tips.map(function (t) { return '<div class="tip">' + t + '</div>'; }).join('');
-    var noteHTML = content.note ? '<div class="card-note">' + content.note + '</div>' : '';
-
     card.innerHTML =
-      '<div class="card-top">' +
+      '<div class="card-header">' +
         '<div>' +
-          '<div class="card-topic-label">' + meta.icon + '  ' + meta.label + '</div>' +
-          '<div class="card-state" style="color:' + content.color + '">' + content.label + '</div>' +
+          '<div class="card-topic">'+META[topic]+'</div>' +
+          '<div class="card-state" style="color:'+c.color+'">'+c.label+'</div>' +
         '</div>' +
-        '<div class="card-score">' + score + '/100</div>' +
+        '<div class="card-score">'+s+' / 100</div>' +
       '</div>' +
-      '<div class="bar-track"><div class="bar-fill" data-w="' + score + '" style="background:' + content.color + '"></div></div>' +
-      '<p class="card-body">' + content.body + '</p>' +
-      '<p class="tips-label">What may help</p>' +
-      '<div class="tips">' + tipsHTML + '</div>' +
+      '<div class="bar-bg"><div class="bar" data-w="'+s+'" style="background:'+c.color+'"></div></div>' +
+      '<p class="card-body">'+c.body+'</p>' +
+      '<p class="tips-label">What might help</p>' +
+      tipsHTML +
       noteHTML;
-
+ 
     cardsEl.appendChild(card);
   });
-
-  // Animate the bars after a short delay (so CSS transition fires)
-  setTimeout(function () {
-    document.querySelectorAll('.bar-fill').forEach(function (bar) {
-      bar.style.width = bar.getAttribute('data-w') + '%';
+ 
+  // animate bars
+  setTimeout(function() {
+    document.querySelectorAll('.bar').forEach(function(b) {
+      b.style.width = b.getAttribute('data-w') + '%';
     });
-  }, 200);
-
-
-  // ── Support box ──
+  }, 150);
+ 
   if (anyLow) {
-    var supportBox = document.getElementById('supportBox');
-    supportBox.style.display = '';
-    supportBox.innerHTML = '<strong>A gentle note:</strong> One or more areas look especially strained today. If things feel overwhelming or unsafe, reaching out to a mental health professional or crisis line is a strong next step.';
+    var sup = document.getElementById('support');
+    sup.style.display = '';
+    sup.innerHTML = '<strong>A gentle note:</strong> One or more areas look especially strained. If things feel overwhelming or unsafe, please reach out to a mental health professional or crisis line.';
   }
-
-
-  // ── Closing line ──
+ 
   var closingEl = document.getElementById('closing');
-  if (average >= 70) {
-    closingEl.textContent = 'There is more steadiness here than you may be giving yourself credit for, ' + name + '.';
-  } else if (average >= 35) {
-    closingEl.textContent = 'You do not have to be all the way okay to be making it through, ' + name + '.';
-  } else {
-    closingEl.textContent = 'Thank you for answering honestly today, ' + name + '. Please be extra gentle with yourself.';
-  }
-
-
-  // ── Navigation ──
-  function nav(url) {
-    document.body.classList.add('fade-out');
-    setTimeout(function () { window.location.href = url; }, 500);
-  }
-
-  document.getElementById('diaryBtn').addEventListener('click', function () { nav('diary.html'); });
-  document.getElementById('retakeBtn').addEventListener('click', function () { nav('questions.html'); });
-
-
-  // ── Download results as a .txt file ──
-  document.getElementById('downloadBtn').addEventListener('click', function () {
-    var lines = [
-      'BREATHE — Reflection Results',
-      'Date: ' + new Date().toLocaleDateString(),
-      'Name: ' + name,
-      '',
-      document.getElementById('summaryBox').textContent,
-      ''
-    ];
-
-    TOPIC_ORDER.forEach(function (topic) {
-      var score   = scores[topic];
-      var content = CONTENT[topic][getBand(score)];
-      lines.push(TOPIC_META[topic].label + ' — ' + content.label + ' (' + score + '/100)');
-      lines.push(content.body);
-      content.tips.forEach(function (t) { lines.push('- ' + t); });
-      if (content.note) lines.push('Note: ' + content.note);
+  if (avg >= 70) closingEl.textContent = 'There\'s more steadiness here than you\'re probably giving yourself credit for, ' + name + '.';
+  else if (avg >= 35) closingEl.textContent = 'You don\'t have to be fully okay to be making it through, ' + name + '.';
+  else closingEl.textContent = 'Thank you for being honest today, ' + name + '. Please be extra gentle with yourself.';
+ 
+  document.getElementById('diaryBtn').addEventListener('click', function(){ window.location.href = 'diary.html'; });
+  document.getElementById('retakeBtn').addEventListener('click', function(){ window.location.href = 'questions.html'; });
+ 
+  document.getElementById('downloadBtn').addEventListener('click', function() {
+    var lines = ['BREATHE — Results', 'Date: ' + new Date().toLocaleDateString(), 'Name: ' + name, ''];
+    TOPICS.forEach(function(t) {
+      var s = scores[t]; var c = CONTENT[t][band(s)];
+      lines.push(META[t] + ' — ' + c.label + ' (' + s + '/100)');
+      lines.push(c.body);
+      c.tips.forEach(function(tip){ lines.push('- ' + tip); });
+      if (c.note) lines.push('Note: ' + c.note);
       lines.push('');
     });
-
     lines.push(closingEl.textContent, '', 'This is a reflection tool, not a medical diagnosis.');
-
-    var blob = new Blob([lines.join('\n')], { type: 'text/plain' });
-    var url  = URL.createObjectURL(blob);
-    var link = document.createElement('a');
-    link.href = url;
-    link.download = 'breathe-results-' + new Date().toISOString().slice(0, 10) + '.txt';
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    var blob = new Blob([lines.join('\n')], { type:'text/plain' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'breathe-' + new Date().toISOString().slice(0,10) + '.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
   });
-
-})();
 </script>
 </body>
 </html>
