@@ -5,125 +5,186 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Your Space — Breathe</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,200;9..40,300;9..40,400&display=swap');
-:root{--bg:#0e0e0e;--bg2:#141414;--surface:#1c1c1c;--surface2:#242424;--border:#2c2c2c;--border2:#3a3a3a;--text:#f0ede8;--text2:#b0aca6;--muted:#585858;--accent:#e8e0d4;--font-display:'Caveat',cursive;--font-body:'Lora',serif;--font-ui:'DM Sans',sans-serif;--pill:999px;--radius:16px;--dur:0.6s;}
-[data-theme="light"]{--bg:#f4f1ec;--bg2:#ede9e3;--surface:#e6e1da;--surface2:#ddd8d0;--border:#ccc7bf;--border2:#b5b0a8;--text:#1c1a17;--text2:#56524d;--muted:#9a9590;--accent:#3a3530;}
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,200;9..40,300;9..40,400;9..40,500&display=swap');
+:root{--bg:#10100f;--bg2:#171715;--surface:rgba(28,28,26,.82);--surface2:rgba(38,38,35,.96);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#f3efe9;--text2:#cbc4ba;--muted:#8c857b;--shadow:0 26px 90px rgba(0,0,0,.32);--font-display:'Caveat',cursive;--font-body:'Lora',serif;--font-ui:'DM Sans',sans-serif;--pill:999px;--dur:.55s;--ease:cubic-bezier(.22,1,.36,1);}
+[data-theme="light"]{--bg:#f4f0e8;--bg2:#ebe4d9;--surface:rgba(255,255,255,.72);--surface2:rgba(248,243,235,.94);--border:rgba(46,37,28,.09);--border2:rgba(46,37,28,.16);--text:#1f1a16;--text2:#5e554d;--muted:#8e8479;--shadow:0 26px 90px rgba(87,68,41,.14);}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-ui);overflow:hidden;transition:background var(--dur),color var(--dur);}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:0.028;}
-.theme-ctrl{position:fixed;top:22px;right:26px;z-index:600;display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;}
-.theme-lbl{font-family:var(--font-ui);font-size:10px;font-weight:300;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;transition:color var(--dur);}
-.tog{position:relative;width:42px;height:22px;background:var(--surface2);border-radius:var(--pill);border:1px solid var(--border2);transition:background var(--dur),border-color var(--dur);}
-.tog::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:var(--muted);border-radius:50%;transition:transform .35s cubic-bezier(.4,0,.2,1),background var(--dur);}
-[data-theme="light"] .tog::after{transform:translateX(20px);background:var(--text2);}
-.btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 24px;border-radius:var(--pill);font-family:var(--font-ui);font-size:13px;font-weight:300;letter-spacing:.04em;cursor:pointer;border:1px solid var(--border2);background:var(--surface);color:var(--text2);transition:background .2s,color .2s,transform .15s;white-space:nowrap;}
-.btn:hover{background:var(--surface2);color:var(--text);}
-.btn:active{transform:scale(.97);}
-@keyframes swipeUp{from{opacity:0;transform:translateY(55px)}to{opacity:1;transform:translateY(0)}}
-@keyframes swipeDown{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-55px)}}
-.pg-enter{animation:swipeUp .65s cubic-bezier(.4,0,.2,1) forwards;}
-.pg-exit{animation:swipeDown .65s cubic-bezier(.4,0,.2,1) forwards;}
-/* layout */
-.shell{position:fixed;inset:0;display:flex;flex-direction:column;padding-top:68px;}
-.d-head{padding:0 36px 20px;flex-shrink:0;}
-.d-title{font-family:var(--font-display);font-size:clamp(28px,5vw,46px);font-weight:400;color:var(--text);margin-bottom:5px;transition:color var(--dur);}
-.d-sub{font-family:var(--font-ui);font-size:11px;font-weight:300;color:var(--muted);letter-spacing:.05em;}
-.d-area{flex:1;padding:0 36px;overflow:hidden;}
-textarea{width:100%;height:100%;background:transparent;border:none;outline:none;resize:none;font-family:var(--font-body);font-size:17px;line-height:1.9;color:var(--text);caret-color:var(--text2);transition:color var(--dur);scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
-textarea::-webkit-scrollbar{width:4px;}
-textarea::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+html,body{height:100%;}
+body{overflow:hidden;background:
+radial-gradient(circle at top, rgba(197,174,153,.12), transparent 32%),
+radial-gradient(circle at bottom left, rgba(116,154,136,.12), transparent 28%),
+linear-gradient(180deg,var(--bg2),var(--bg));color:var(--text);font-family:var(--font-ui);transition:background var(--dur) var(--ease),color var(--dur) var(--ease);}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:
+radial-gradient(circle at 15% 20%, rgba(255,255,255,.05), transparent 24%),
+radial-gradient(circle at 82% 78%, rgba(255,255,255,.04), transparent 20%);}
+.theme-ctrl{position:absolute;top:22px;right:22px;z-index:20;display:inline-flex;align-items:center;gap:10px;background:transparent;border:none;color:inherit;cursor:pointer;font:inherit;}
+.theme-lbl{font-size:10px;font-weight:400;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;}
+.tog{position:relative;width:46px;height:24px;background:var(--surface2);border-radius:var(--pill);border:1px solid var(--border2);transition:background var(--dur) var(--ease),border-color var(--dur) var(--ease);}
+.tog::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--text2);transition:transform .45s var(--ease),background var(--dur) var(--ease);}
+[data-theme="light"] .tog::after{transform:translateX(22px);}
+.page{position:fixed;inset:0;padding:18px;}
+.shell{position:relative;height:100%;padding:78px 24px 20px;border:1px solid var(--border);border-radius:34px;background:var(--surface);backdrop-filter:blur(22px);box-shadow:var(--shadow);display:grid;grid-template-rows:auto auto 1fr auto;gap:16px;}
+.head{display:grid;gap:10px;}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;width:max-content;padding:9px 12px;border:1px solid var(--border);border-radius:var(--pill);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.title{font-family:var(--font-display);font-size:clamp(32px,5vw,54px);line-height:1;}
+.sub{max-width:760px;font-family:var(--font-body);font-size:17px;line-height:1.8;color:var(--text2);}
+.prompt{padding:16px 18px;border:1px solid var(--border);border-radius:22px;background:rgba(255,255,255,.03);font-family:var(--font-body);font-size:15px;line-height:1.7;color:var(--text2);}
+.area-wrap{position:relative;min-height:0;}
+textarea{width:100%;height:100%;padding:18px 2px 12px;border:none;background:transparent;outline:none;resize:none;color:var(--text);font-family:var(--font-body);font-size:19px;line-height:1.95;caret-color:var(--text2);}
 textarea::placeholder{color:var(--muted);font-style:italic;}
-.divider{height:1px;background:var(--border);margin:0 36px;flex-shrink:0;transition:background var(--dur);}
-.d-foot{padding:14px 36px 26px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.d-notice{font-family:var(--font-ui);font-size:10px;font-weight:300;color:var(--muted);display:flex;align-items:center;gap:8px;}
-.dot-ind{width:6px;height:6px;background:var(--muted);border-radius:50%;opacity:.55;flex-shrink:0;}
-.d-right{display:flex;align-items:center;gap:14px;}
-.wc{font-family:var(--font-ui);font-size:10px;font-weight:300;color:var(--muted);min-width:56px;text-align:right;}
-.btns{display:flex;gap:9px;}
-/* modal */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;z-index:500;opacity:0;pointer-events:none;transition:opacity .3s;}
-.modal-bg.on{opacity:1;pointer-events:all;}
-.modal{background:var(--surface2);border:1px solid var(--border2);border-radius:20px;padding:30px 32px;max-width:300px;text-align:center;transition:background var(--dur);}
-.modal p{font-family:var(--font-display);font-size:20px;color:var(--text);margin-bottom:7px;}
-.modal small{font-family:var(--font-ui);font-size:12px;color:var(--muted);display:block;margin-bottom:22px;}
-.modal-btns{display:flex;gap:11px;justify-content:center;}
+textarea::-webkit-scrollbar{width:6px;}
+textarea::-webkit-scrollbar-thumb{background:var(--border2);border-radius:999px;}
+.divider{height:1px;background:var(--border);}
+.foot{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+.meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;}
+.dot{width:7px;height:7px;border-radius:50%;background:#7eb091;box-shadow:0 0 0 10px rgba(126,176,145,.08);}
+.wc{font-size:12px;color:var(--text2);}
+.actions{display:flex;gap:10px;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:var(--pill);border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-family:var(--font-ui);font-size:13px;font-weight:400;letter-spacing:.04em;cursor:pointer;transition:transform .22s var(--ease),background .3s var(--ease);}
+.btn:hover{transform:translateY(-1px);}
+.btn:active{transform:translateY(1px) scale(.985);}
+.modal-bg{position:fixed;inset:0;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.52);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .28s var(--ease);}
+.modal-bg.on{opacity:1;pointer-events:auto;}
+.modal{width:min(360px,100%);padding:24px;border:1px solid var(--border2);border-radius:28px;background:var(--surface2);box-shadow:var(--shadow);display:grid;gap:12px;}
+.modal h2{font-family:var(--font-display);font-size:32px;line-height:1;}
+.modal p{font-family:var(--font-body);font-size:16px;line-height:1.7;color:var(--text2);}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:6px;}
+.page-enter{animation:pageIn .72s var(--ease) both;}
+.page-exit{animation:pageOut .58s cubic-bezier(.4,0,.2,1) both;}
+@keyframes pageIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes pageOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-26px)}}
+@media (max-width:760px){
+  .page{padding:12px;}
+  .shell{padding:72px 16px 18px;border-radius:26px;}
+  .foot{align-items:flex-start;}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
 </style>
 </head>
-<body class="pg-enter">
+<body class="page-enter">
+<div class="page">
+  <main class="shell">
+    <button class="theme-ctrl" id="themeCtrl" type="button" aria-label="Toggle theme">
+      <span class="theme-lbl" id="themeLbl">Dark</span>
+      <span class="tog" aria-hidden="true"></span>
+    </button>
 
-<div class="theme-ctrl" id="themeCtrl">
-  <span class="theme-lbl" id="themeLbl">Dark</span>
-  <div class="tog"></div>
-</div>
+    <section class="head">
+      <span class="eyebrow">Private writing space</span>
+      <h1 class="title" id="title">Your space.</h1>
+      <p class="sub">Write freely for a minute or for a while. Nothing here gets uploaded anywhere, and it clears if you close the page.</p>
+    </section>
 
-<div class="shell">
-  <div class="d-head">
-    <p class="d-title" id="dTitle">Your space</p>
-    <p class="d-sub">Write whatever is on your mind. Nothing here is saved or stored.</p>
-  </div>
-  <div class="d-area">
-    <textarea id="ta" placeholder="Start writing... let it all out. No one will read this. It disappears when you close the page."></textarea>
-  </div>
-  <div class="divider"></div>
-  <div class="d-foot">
-    <div class="d-notice"><span class="dot-ind"></span>Not stored &nbsp;&middot;&nbsp; Not sent &nbsp;&middot;&nbsp; Disappears on close</div>
-    <div class="d-right">
-      <span class="wc" id="wc">0 words</span>
-      <div class="btns">
-        <button class="btn" id="clearBtn">Clear</button>
-        <button class="btn" id="backBtn">&#8592; Results</button>
-      </div>
+    <div class="prompt" id="promptBox"></div>
+
+    <div class="area-wrap">
+      <textarea id="ta" placeholder="Start where your mind keeps returning. You do not need to make it polished or complete."></textarea>
     </div>
-  </div>
+
+    <div class="divider"></div>
+
+    <footer class="foot">
+      <div class="meta">
+        <span class="dot"></span>
+        <span>Private</span>
+        <span>Local only</span>
+        <span>Clears on close</span>
+      </div>
+      <span class="wc" id="wc">0 words</span>
+      <div class="actions">
+        <button class="btn" id="clearBtn" type="button">Clear</button>
+        <button class="btn" id="backBtn" type="button">← Results</button>
+      </div>
+    </footer>
+  </main>
 </div>
 
 <div class="modal-bg" id="modal">
-  <div class="modal">
-    <p>Clear everything?</p>
-    <small>This cannot be undone.</small>
-    <div class="modal-btns">
-      <button class="btn" id="keepBtn">Keep it</button>
-      <button class="btn" id="yesBtn">Yes, clear</button>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h2 id="modalTitle">Clear everything?</h2>
+    <p>This page is private, but clearing it will remove everything currently written here.</p>
+    <div class="modal-actions">
+      <button class="btn" id="keepBtn" type="button">Keep writing</button>
+      <button class="btn" id="yesBtn" type="button">Yes, clear</button>
     </div>
   </div>
 </div>
 
 <script>
 (function(){
-  var root=document.documentElement, lbl=document.getElementById('themeLbl'), ctrl=document.getElementById('themeCtrl');
-  var th=localStorage.getItem('bth_theme')||'dark';
-  root.setAttribute('data-theme',th); lbl.textContent=th==='dark'?'Dark':'Light';
-  ctrl.addEventListener('click',function(){
-    var n=root.getAttribute('data-theme')==='light'?'dark':'light';
-    root.setAttribute('data-theme',n); localStorage.setItem('bth_theme',n); lbl.textContent=n==='dark'?'Dark':'Light';
-  });
-
-  function nav(u){ document.body.classList.add('pg-exit'); setTimeout(function(){window.location.href=u;},620); }
-
-  var name = localStorage.getItem('bth_name')||'friend';
-  document.getElementById('dTitle').textContent = 'Your space, '+name;
-
-  var ta  = document.getElementById('ta');
-  var wc  = document.getElementById('wc');
+  var root = document.documentElement;
+  var themeCtrl = document.getElementById('themeCtrl');
+  var themeLbl = document.getElementById('themeLbl');
+  var title = document.getElementById('title');
+  var ta = document.getElementById('ta');
+  var wc = document.getElementById('wc');
   var modal = document.getElementById('modal');
+  var promptBox = document.getElementById('promptBox');
+  var allowLeave = false;
+  var name = localStorage.getItem('bth_name') || 'friend';
 
-  ta.addEventListener('input', function(){
-    var w = ta.value.trim().split(/\s+/).filter(Boolean).length;
-    wc.textContent = w===0?'0 words':w+(w===1?' word':' words');
+  var prompts = [
+    'What feels heaviest in your chest right now, and what do you wish someone understood about it?',
+    'What would a gentler day look like for you today?',
+    'If your mind has been loud, what has it been saying most often?',
+    'What are you carrying alone that might feel lighter once it is written down?'
+  ];
+
+  function setTheme(theme){
+    root.setAttribute('data-theme', theme);
+    themeLbl.textContent = theme === 'dark' ? 'Dark' : 'Light';
+    try{ localStorage.setItem('bth_theme', theme); }catch(e){}
+  }
+
+  setTheme(localStorage.getItem('bth_theme') || 'dark');
+  themeCtrl.addEventListener('click', function(){
+    setTheme(root.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
   });
 
+  title.textContent = 'Your space, ' + name + '.';
+  promptBox.textContent = prompts[Math.floor(Math.random() * prompts.length)];
+
+  function updateWordCount(){
+    var words = ta.value.trim().split(/\s+/).filter(Boolean).length;
+    wc.textContent = words === 1 ? '1 word' : words + ' words';
+  }
+
+  function nav(url){
+    allowLeave = true;
+    document.body.classList.add('page-exit');
+    setTimeout(function(){ window.location.href = url; }, 540);
+  }
+
+  ta.addEventListener('input', updateWordCount);
   document.getElementById('backBtn').addEventListener('click', function(){ nav('results.html'); });
   document.getElementById('clearBtn').addEventListener('click', function(){ modal.classList.add('on'); });
-  document.getElementById('keepBtn').addEventListener('click', function(){ modal.classList.remove('on'); });
+  document.getElementById('keepBtn').addEventListener('click', function(){ modal.classList.remove('on'); ta.focus(); });
   document.getElementById('yesBtn').addEventListener('click', function(){
-    ta.value=''; wc.textContent='0 words'; modal.classList.remove('on'); ta.focus();
+    ta.value = '';
+    updateWordCount();
+    modal.classList.remove('on');
+    ta.focus();
+  });
+
+  modal.addEventListener('click', function(e){
+    if(e.target === modal){
+      modal.classList.remove('on');
+      ta.focus();
+    }
   });
 
   window.addEventListener('beforeunload', function(e){
-    if(ta.value.trim().length>0){ e.preventDefault(); e.returnValue=''; }
+    if(allowLeave){ return; }
+    if(ta.value.trim()){
+      e.preventDefault();
+      e.returnValue = '';
+    }
   });
 
-  ta.focus();
+  updateWordCount();
+  setTimeout(function(){ ta.focus(); }, 120);
 })();
 </script>
 </body>

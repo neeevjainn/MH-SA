@@ -1,190 +1,363 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Your Space — Breathe</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,200;9..40,300;9..40,400;9..40,500&display=swap');
-:root{--bg:#10100f;--bg2:#171715;--surface:rgba(28,28,26,.82);--surface2:rgba(38,38,35,.96);--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#f3efe9;--text2:#cbc4ba;--muted:#8c857b;--shadow:0 26px 90px rgba(0,0,0,.32);--font-display:'Caveat',cursive;--font-body:'Lora',serif;--font-ui:'DM Sans',sans-serif;--pill:999px;--dur:.55s;--ease:cubic-bezier(.22,1,.36,1);}
-[data-theme="light"]{--bg:#f4f0e8;--bg2:#ebe4d9;--surface:rgba(255,255,255,.72);--surface2:rgba(248,243,235,.94);--border:rgba(46,37,28,.09);--border2:rgba(46,37,28,.16);--text:#1f1a16;--text2:#5e554d;--muted:#8e8479;--shadow:0 26px 90px rgba(87,68,41,.14);}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;}
-body{overflow:hidden;background:
-radial-gradient(circle at top, rgba(197,174,153,.12), transparent 32%),
-radial-gradient(circle at bottom left, rgba(116,154,136,.12), transparent 28%),
-linear-gradient(180deg,var(--bg2),var(--bg));color:var(--text);font-family:var(--font-ui);transition:background var(--dur) var(--ease),color var(--dur) var(--ease);}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;background:
-radial-gradient(circle at 15% 20%, rgba(255,255,255,.05), transparent 24%),
-radial-gradient(circle at 82% 78%, rgba(255,255,255,.04), transparent 20%);}
-.theme-ctrl{position:absolute;top:22px;right:22px;z-index:20;display:inline-flex;align-items:center;gap:10px;background:transparent;border:none;color:inherit;cursor:pointer;font:inherit;}
-.theme-lbl{font-size:10px;font-weight:400;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;}
-.tog{position:relative;width:46px;height:24px;background:var(--surface2);border-radius:var(--pill);border:1px solid var(--border2);transition:background var(--dur) var(--ease),border-color var(--dur) var(--ease);}
-.tog::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--text2);transition:transform .45s var(--ease),background var(--dur) var(--ease);}
-[data-theme="light"] .tog::after{transform:translateX(22px);}
-.page{position:fixed;inset:0;padding:18px;}
-.shell{position:relative;height:100%;padding:78px 24px 20px;border:1px solid var(--border);border-radius:34px;background:var(--surface);backdrop-filter:blur(22px);box-shadow:var(--shadow);display:grid;grid-template-rows:auto auto 1fr auto;gap:16px;}
-.head{display:grid;gap:10px;}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;width:max-content;padding:9px 12px;border:1px solid var(--border);border-radius:var(--pill);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
-.title{font-family:var(--font-display);font-size:clamp(32px,5vw,54px);line-height:1;}
-.sub{max-width:760px;font-family:var(--font-body);font-size:17px;line-height:1.8;color:var(--text2);}
-.prompt{padding:16px 18px;border:1px solid var(--border);border-radius:22px;background:rgba(255,255,255,.03);font-family:var(--font-body);font-size:15px;line-height:1.7;color:var(--text2);}
-.area-wrap{position:relative;min-height:0;}
-textarea{width:100%;height:100%;padding:18px 2px 12px;border:none;background:transparent;outline:none;resize:none;color:var(--text);font-family:var(--font-body);font-size:19px;line-height:1.95;caret-color:var(--text2);}
-textarea::placeholder{color:var(--muted);font-style:italic;}
-textarea::-webkit-scrollbar{width:6px;}
-textarea::-webkit-scrollbar-thumb{background:var(--border2);border-radius:999px;}
-.divider{height:1px;background:var(--border);}
-.foot{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
-.meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;}
-.dot{width:7px;height:7px;border-radius:50%;background:#7eb091;box-shadow:0 0 0 10px rgba(126,176,145,.08);}
-.wc{font-size:12px;color:var(--text2);}
-.actions{display:flex;gap:10px;flex-wrap:wrap;}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:var(--pill);border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-family:var(--font-ui);font-size:13px;font-weight:400;letter-spacing:.04em;cursor:pointer;transition:transform .22s var(--ease),background .3s var(--ease);}
-.btn:hover{transform:translateY(-1px);}
-.btn:active{transform:translateY(1px) scale(.985);}
-.modal-bg{position:fixed;inset:0;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.52);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .28s var(--ease);}
-.modal-bg.on{opacity:1;pointer-events:auto;}
-.modal{width:min(360px,100%);padding:24px;border:1px solid var(--border2);border-radius:28px;background:var(--surface2);box-shadow:var(--shadow);display:grid;gap:12px;}
-.modal h2{font-family:var(--font-display);font-size:32px;line-height:1;}
-.modal p{font-family:var(--font-body);font-size:16px;line-height:1.7;color:var(--text2);}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:6px;}
-.page-enter{animation:pageIn .72s var(--ease) both;}
-.page-exit{animation:pageOut .58s cubic-bezier(.4,0,.2,1) both;}
-@keyframes pageIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
-@keyframes pageOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-26px)}}
-@media (max-width:760px){
-  .page{padding:12px;}
-  .shell{padding:72px 16px 18px;border-radius:26px;}
-  .foot{align-items:flex-start;}
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Lora:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400&display=swap');
+
+/* ── Variables ── */
+:root {
+  --bg: #0e0e0e;
+  --text: #f0ede8;
+  --text2: #b0aca6;
+  --muted: #585858;
+  --surface: #1c1c1c;
+  --border: #2c2c2c;
+  --border2: #3a3a3a;
+  --font-display: 'Caveat', cursive;
+  --font-body: 'Lora', serif;
+  --font-ui: 'DM Sans', sans-serif;
 }
-@media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+[data-theme="light"] {
+  --bg: #f4f1ec;
+  --text: #1c1a17;
+  --text2: #56524d;
+  --muted: #9a9590;
+  --surface: #e6e1da;
+  --border: #ccc7bf;
+  --border2: #b5b0a8;
 }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  display: flex;
+  flex-direction: column;
+  transition: background 0.4s, color 0.4s;
+}
+
+/* ── Theme toggle ── */
+.theme-btn {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 300;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  cursor: pointer;
+  z-index: 10;
+}
+.theme-btn:hover { color: var(--text2); }
+
+/* ── Main layout (fills the screen) ── */
+.shell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 72px 36px 20px;
+  gap: 14px;
+  min-height: 0;
+}
+
+/* ── Header ── */
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 5vw, 50px);
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.subtitle {
+  font-size: 11px;
+  font-weight: 300;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+/* ── Writing prompt ── */
+.prompt {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.02);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text2);
+  font-style: italic;
+}
+
+/* ── Textarea fills remaining space ── */
+.area {
+  flex: 1;
+  min-height: 0; /* needed for flex children to scroll properly */
+}
+
+textarea {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.9;
+  color: var(--text);
+  caret-color: var(--text2);
+  /* custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+textarea::placeholder { color: var(--muted); font-style: italic; }
+
+/* ── Divider ── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+/* ── Footer ── */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-bottom: 4px;
+  flex-shrink: 0;
+}
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  font-weight: 300;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  opacity: 0.5;
+}
+.word-count {
+  font-size: 11px;
+  color: var(--muted);
+}
+.actions { display: flex; gap: 9px; }
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  color: var(--text2);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 300;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.btn:hover { background: var(--border2); color: var(--text); }
+
+/* ── Clear confirmation modal ── */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.modal-bg.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+.modal {
+  width: min(320px, 100%);
+  padding: 26px 28px;
+  border: 1px solid var(--border2);
+  border-radius: 22px;
+  background: var(--surface);
+  text-align: center;
+  display: grid;
+  gap: 10px;
+}
+.modal h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--text);
+}
+.modal p {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+.modal-btns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* ── Fade out on navigate ── */
+body.fade-out { animation: fadeOut 0.5s ease forwards; }
+@keyframes fadeOut { to { opacity: 0; } }
 </style>
 </head>
-<body class="page-enter">
-<div class="page">
-  <main class="shell">
-    <button class="theme-ctrl" id="themeCtrl" type="button" aria-label="Toggle theme">
-      <span class="theme-lbl" id="themeLbl">Dark</span>
-      <span class="tog" aria-hidden="true"></span>
-    </button>
+<body>
 
-    <section class="head">
-      <span class="eyebrow">Private writing space</span>
-      <h1 class="title" id="title">Your space.</h1>
-      <p class="sub">Write freely for a minute or for a while. Nothing here gets uploaded anywhere, and it clears if you close the page.</p>
-    </section>
+  <button class="theme-btn" id="themeBtn">Light / Dark</button>
 
-    <div class="prompt" id="promptBox"></div>
+  <div class="shell">
+    <header>
+      <h1 class="title" id="pageTitle">Your space.</h1>
+      <p class="subtitle">Write freely. Nothing here is uploaded or saved anywhere.</p>
+    </header>
 
-    <div class="area-wrap">
-      <textarea id="ta" placeholder="Start where your mind keeps returning. You do not need to make it polished or complete."></textarea>
+    <!-- A random writing prompt to help get started -->
+    <div class="prompt" id="prompt"></div>
+
+    <div class="area">
+      <textarea id="ta" placeholder="Start where your mind keeps returning. You don't need to make it polished."></textarea>
     </div>
 
     <div class="divider"></div>
 
-    <footer class="foot">
+    <footer class="footer">
       <div class="meta">
         <span class="dot"></span>
-        <span>Private</span>
-        <span>Local only</span>
-        <span>Clears on close</span>
+        <span>Private · Local only · Clears on close</span>
       </div>
-      <span class="wc" id="wc">0 words</span>
+      <span class="word-count" id="wordCount">0 words</span>
       <div class="actions">
-        <button class="btn" id="clearBtn" type="button">Clear</button>
-        <button class="btn" id="backBtn" type="button">← Results</button>
+        <button class="btn" id="clearBtn">Clear</button>
+        <button class="btn" id="backBtn">← Results</button>
       </div>
     </footer>
-  </main>
-</div>
+  </div>
 
-<div class="modal-bg" id="modal">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <h2 id="modalTitle">Clear everything?</h2>
-    <p>This page is private, but clearing it will remove everything currently written here.</p>
-    <div class="modal-actions">
-      <button class="btn" id="keepBtn" type="button">Keep writing</button>
-      <button class="btn" id="yesBtn" type="button">Yes, clear</button>
+  <!-- Confirmation modal before clearing -->
+  <div class="modal-bg" id="modal">
+    <div class="modal" role="dialog" aria-modal="true">
+      <h2>Clear everything?</h2>
+      <p>This will remove everything you've written here.</p>
+      <div class="modal-btns">
+        <button class="btn" id="keepBtn">Keep it</button>
+        <button class="btn" id="yesBtn">Yes, clear</button>
+      </div>
     </div>
   </div>
-</div>
 
 <script>
-(function(){
-  var root = document.documentElement;
-  var themeCtrl = document.getElementById('themeCtrl');
-  var themeLbl = document.getElementById('themeLbl');
-  var title = document.getElementById('title');
-  var ta = document.getElementById('ta');
-  var wc = document.getElementById('wc');
-  var modal = document.getElementById('modal');
-  var promptBox = document.getElementById('promptBox');
-  var allowLeave = false;
-  var name = localStorage.getItem('bth_name') || 'friend';
+(function () {
 
+  // ── Theme ──
+  var root = document.documentElement;
+  var themeBtn = document.getElementById('themeBtn');
+  root.setAttribute('data-theme', localStorage.getItem('bth_theme') || 'dark');
+  themeBtn.addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('bth_theme', next);
+  });
+
+
+  // ── Personalise title ──
+  var name = localStorage.getItem('bth_name') || 'friend';
+  document.getElementById('pageTitle').textContent = 'Your space, ' + name + '.';
+
+
+  // ── Random writing prompt ──
   var prompts = [
     'What feels heaviest in your chest right now, and what do you wish someone understood about it?',
     'What would a gentler day look like for you today?',
-    'If your mind has been loud, what has it been saying most often?',
+    'If your mind has been loud lately, what has it been saying most often?',
     'What are you carrying alone that might feel lighter once it is written down?'
   ];
+  document.getElementById('prompt').textContent = prompts[Math.floor(Math.random() * prompts.length)];
 
-  function setTheme(theme){
-    root.setAttribute('data-theme', theme);
-    themeLbl.textContent = theme === 'dark' ? 'Dark' : 'Light';
-    try{ localStorage.setItem('bth_theme', theme); }catch(e){}
-  }
 
-  setTheme(localStorage.getItem('bth_theme') || 'dark');
-  themeCtrl.addEventListener('click', function(){
-    setTheme(root.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
-  });
+  // ── Word count ──
+  var ta        = document.getElementById('ta');
+  var wordCount = document.getElementById('wordCount');
 
-  title.textContent = 'Your space, ' + name + '.';
-  promptBox.textContent = prompts[Math.floor(Math.random() * prompts.length)];
-
-  function updateWordCount(){
+  function updateWordCount() {
     var words = ta.value.trim().split(/\s+/).filter(Boolean).length;
-    wc.textContent = words === 1 ? '1 word' : words + ' words';
-  }
-
-  function nav(url){
-    allowLeave = true;
-    document.body.classList.add('page-exit');
-    setTimeout(function(){ window.location.href = url; }, 540);
+    wordCount.textContent = words === 1 ? '1 word' : words + ' words';
   }
 
   ta.addEventListener('input', updateWordCount);
-  document.getElementById('backBtn').addEventListener('click', function(){ nav('results.html'); });
-  document.getElementById('clearBtn').addEventListener('click', function(){ modal.classList.add('on'); });
-  document.getElementById('keepBtn').addEventListener('click', function(){ modal.classList.remove('on'); ta.focus(); });
-  document.getElementById('yesBtn').addEventListener('click', function(){
+  updateWordCount();
+  setTimeout(function () { ta.focus(); }, 100);
+
+
+  // ── Navigation ──
+  var allowLeave = false;
+
+  function nav(url) {
+    allowLeave = true;
+    document.body.classList.add('fade-out');
+    setTimeout(function () { window.location.href = url; }, 500);
+  }
+
+  document.getElementById('backBtn').addEventListener('click', function () { nav('results.html'); });
+
+
+  // ── Clear modal ──
+  var modal = document.getElementById('modal');
+
+  document.getElementById('clearBtn').addEventListener('click', function () {
+    modal.classList.add('visible');
+  });
+  document.getElementById('keepBtn').addEventListener('click', function () {
+    modal.classList.remove('visible');
+    ta.focus();
+  });
+  document.getElementById('yesBtn').addEventListener('click', function () {
     ta.value = '';
     updateWordCount();
-    modal.classList.remove('on');
+    modal.classList.remove('visible');
     ta.focus();
   });
 
-  modal.addEventListener('click', function(e){
-    if(e.target === modal){
-      modal.classList.remove('on');
+  // Click outside modal = close it
+  modal.addEventListener('click', function (e) {
+    if (e.target === modal) {
+      modal.classList.remove('visible');
       ta.focus();
     }
   });
 
-  window.addEventListener('beforeunload', function(e){
-    if(allowLeave){ return; }
-    if(ta.value.trim()){
+
+  // ── Warn before leaving if there's unsaved text ──
+  window.addEventListener('beforeunload', function (e) {
+    if (!allowLeave && ta.value.trim()) {
       e.preventDefault();
       e.returnValue = '';
     }
   });
 
-  updateWordCount();
-  setTimeout(function(){ ta.focus(); }, 120);
 })();
 </script>
 </body>

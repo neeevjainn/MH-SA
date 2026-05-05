@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Breathe</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,200;9..40,300;9..40,400&display=swap');
+:root{--bg:#0e0e0e;--bg2:#141414;--surface:#1c1c1c;--surface2:#242424;--border:#2c2c2c;--border2:#3a3a3a;--text:#f0ede8;--text2:#b0aca6;--muted:#585858;--accent:#e8e0d4;--font-display:'Caveat',cursive;--font-body:'Lora',serif;--font-ui:'DM Sans',sans-serif;--pill:999px;--dur:0.6s;--fade:1.5s cubic-bezier(0.4,0,0.2,1);}
+[data-theme="light"]{--bg:#f4f1ec;--bg2:#ede9e3;--surface:#e6e1da;--surface2:#ddd8d0;--border:#ccc7bf;--border2:#b5b0a8;--text:#1c1a17;--text2:#56524d;--muted:#9a9590;--accent:#3a3530;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-ui);overflow:hidden;transition:background var(--dur),color var(--dur);}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:0.028;}
+
+.theme-ctrl{position:fixed;top:22px;right:26px;z-index:600;display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;}
+.theme-lbl{font-family:var(--font-ui);font-size:10px;font-weight:300;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;transition:color var(--dur);}
+.tog{position:relative;width:42px;height:22px;background:var(--surface2);border-radius:var(--pill);border:1px solid var(--border2);transition:background var(--dur),border-color var(--dur);}
+.tog::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:var(--muted);border-radius:50%;transition:transform .35s cubic-bezier(.4,0,.2,1),background var(--dur);}
+[data-theme="light"] .tog::after{transform:translateX(20px);background:var(--text2);}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 26px;border-radius:var(--pill);font-family:var(--font-ui);font-size:13px;font-weight:300;letter-spacing:.04em;cursor:pointer;border:1px solid var(--border2);background:var(--surface);color:var(--text2);transition:background .2s,color .2s,transform .15s;text-decoration:none;}
+.btn:hover{background:var(--surface2);color:var(--text);}
+.btn:active{transform:scale(.97);}
+.btn-circle{width:40px;height:40px;padding:0;border-radius:50%;font-size:18px;}
+
+@keyframes swipeUp{from{opacity:0;transform:translateY(55px)}to{opacity:1;transform:translateY(0)}}
+@keyframes swipeDown{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-55px)}}
+.pg-enter{animation:swipeUp .65s cubic-bezier(.4,0,.2,1) forwards;}
+.pg-exit{animation:swipeDown .65s cubic-bezier(.4,0,.2,1) forwards;}
+
+.frame{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity var(--fade);}
+.frame.active{opacity:1;pointer-events:all;}
+
+.hi{font-family:var(--font-display);font-size:clamp(90px,15vw,170px);font-weight:400;color:var(--text);letter-spacing:-3px;opacity:0;transform:translateY(22px);transition:opacity 1.4s .35s ease,transform 1.4s .35s ease,color var(--dur);}
+.frame.active .hi{opacity:1;transform:translateY(0);}
+
+.breathe{text-align:center;opacity:0;transform:translateY(18px);transition:opacity 1.4s .35s ease,transform 1.4s .35s ease;}
+.frame.active .breathe{opacity:1;transform:translateY(0);}
+.breathe p{font-family:var(--font-display);font-size:clamp(26px,4.5vw,50px);font-weight:400;line-height:1.65;color:var(--text);transition:color var(--dur);}
+.breathe p.sub{color:var(--text2);}
+
+.name-card{display:flex;flex-direction:column;align-items:center;gap:20px;opacity:0;transform:translateY(18px);transition:opacity 1.4s .35s ease,transform 1.4s .35s ease;}
+.frame.active .name-card{opacity:1;transform:translateY(0);}
+.name-inp{background:var(--surface);border:1px solid var(--border2);border-radius:var(--pill);padding:15px 32px;font-family:var(--font-display);font-size:24px;color:var(--text);width:300px;text-align:center;outline:none;transition:border-color .3s,background .3s,color var(--dur);caret-color:var(--accent);}
+.name-inp::placeholder{color:var(--muted);}
+.name-inp:focus{border-color:var(--muted);background:var(--surface2);}
+
+.disc{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);font-family:var(--font-ui);font-size:10.5px;color:var(--muted);text-align:center;max-width:500px;line-height:1.7;opacity:0;pointer-events:none;transition:opacity 1s .5s ease,color var(--dur);white-space:nowrap;}
+.disc.on{opacity:1;}
+</style>
+</head>
+<body class="pg-enter">
+
+<div class="theme-ctrl" id="themeCtrl">
+  <span class="theme-lbl" id="themeLbl">Dark</span>
+  <div class="tog"></div>
+</div>
+
+<div class="frame active" id="f1"><span class="hi">Hi</span></div>
+
+<div class="frame" id="f2">
+  <div class="breathe">
+    <p>Take a breath</p>
+    <p class="sub">We are here to help you</p>
+  </div>
+</div>
+
+<div class="frame" id="f3">
+  <div class="name-card">
+    <input class="name-inp" id="nameInp" type="text" placeholder="What do we call you?" maxlength="30" autocomplete="off"/>
+    <button class="btn btn-circle" id="goBtn">&#8594;</button>
+  </div>
+</div>
+
+<p class="disc" id="disc">This is a self-reflection tool, not a medical diagnosis. Your answers are completely anonymous and never leave your device.</p>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  var lbl  = document.getElementById('themeLbl');
+  var ctrl = document.getElementById('themeCtrl');
+  var saved = localStorage.getItem('bth_theme') || 'dark';
+  root.setAttribute('data-theme', saved);
+  lbl.textContent = saved === 'dark' ? 'Dark' : 'Light';
+  ctrl.addEventListener('click', function(){
+    var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('bth_theme', next);
+    lbl.textContent = next === 'dark' ? 'Dark' : 'Light';
+  });
+
+  var frames = [document.getElementById('f1'), document.getElementById('f2'), document.getElementById('f3')];
+  var disc   = document.getElementById('disc');
+  var inp    = document.getElementById('nameInp');
+  var cur    = 0;
+
+  function goTo(i){
+    frames[cur].classList.remove('active');
+    cur = i;
+    frames[cur].classList.add('active');
+    if(cur === 2){ disc.classList.add('on'); setTimeout(function(){ inp.focus(); }, 900); }
+  }
+
+  setTimeout(function(){ goTo(1); }, 3000);
+  setTimeout(function(){ goTo(2); }, 6000);
+
+  function proceed(){
+    var name = inp.value.trim() || 'friend';
+    localStorage.setItem('bth_name', name);
+    document.body.classList.add('pg-exit');
+    setTimeout(function(){ window.location.href = 'questions.html'; }, 620);
+  }
+
+  document.getElementById('goBtn').addEventListener('click', proceed);
+  inp.addEventListener('keydown', function(e){ if(e.key === 'Enter') proceed(); });
+
+  var prevName = localStorage.getItem('bth_name');
+  if(prevName && prevName !== 'friend') inp.value = prevName;
+})();
+</script>
+</body>
+</html>
